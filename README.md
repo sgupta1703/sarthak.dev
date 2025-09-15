@@ -1,12 +1,21 @@
-# React + Vite
+Sarthak Gupta Terminal Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to my interactive, terminal-style personal portfolio! This website showcases my projects, experience, technical skills, and contact information in a fun and engaging command-line interface inspired design.
 
-Currently, two official plugins are available:
+Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Interactive Terminal Interface: Navigate through commands like /help, /resume, /skills, /contact, and more.
 
-## Expanding the ESLint configuration
+Autocomplete Suggestions: Type commands and see suggestions in real-time as you type.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Command History Navigation: Use the up and down arrow keys to browse your previous commands.
+
+Custom Resume Display: View education, experience, and projects in a structured, terminal-friendly format.
+
+Technical Skills Section: Highlighted with clean categorization of languages, frameworks, tools, and developer tools.
+
+💻 Technologies Used
+
+Frontend: React.js
+
+Styling: Tailwind CSS
