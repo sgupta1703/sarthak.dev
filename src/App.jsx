@@ -354,7 +354,7 @@ contact: () => ({
           <div className="site-title">Sar·thak Gup·ta</div>
           <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
           <div className="subtitle">noun · proper</div>
-          <div className="tagline"><span className="name-highlight">Sarthak Gupta</span> — Genius, Hungry, Playboy, Thinker</div>
+          <div className="tagline"><span className="name-highlight">Sarthak Gupta</span> — Thinker, Builder, Dreamer, Doer</div>
 
           <div className="history">
             {history.map((item, index) => (
