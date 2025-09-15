@@ -193,7 +193,10 @@ contact: () => ({
           </a>
         </div>
         <div>
-          <span className="prompt-symbol">Portfolio:</span> sarthak.dev (coming soon)
+          <span className="prompt-symbol">Personal Website:</span>{' '}
+          <a href="https://sarthak-dev-woad.vercel.app/" target="_blank" rel="noopener noreferrer">
+            sarthak.dev
+          </a>       
         </div>
       </div>
       <div className="subtle" style={{ marginTop: 8 }}>
