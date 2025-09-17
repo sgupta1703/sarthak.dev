@@ -1,31 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+import { supabase } from "./Components/supabaseClient";
+import Login from "./Components/Login";
 
 export default function App() {
   const [input, setInput] = useState('');
-  const [history, setHistory] = useState([]); 
-  const [commandHistory, setCommandHistory] = useState([]); 
+  const [history, setHistory] = useState([]);
+  const [commandHistory, setCommandHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [suggestions, setSuggestions] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+  const [user, setUser] = useState(null);
+  const [siteLoadTime] = useState(performance.now());
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setUser(data.session.user);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => setUser(session?.user ?? null)
+    );
+
+    return () => listener.subscription.unsubscribe();
   }, []);
 
-  const commandNames = ['help', 'me', 'resume', 'contact', 'skills', 'clear'];
+  const publicCommands = ['help', 'me', 'resume', 'contact', 'skills', 'clear'];
+  
+  const devCommands = ['login', 'logout', 'whoami', 'dev', 'secret'];
+
+  const commandNames = user ? [...publicCommands, ...devCommands] : [...publicCommands, 'login'];
 
   const computeSuggestions = (rawInput) => {
-    const trimmed = rawInput.startsWith('/') ? rawInput.slice(1) : rawInput;
+    if (!rawInput.startsWith('/')) return [];
+    const trimmed = rawInput.slice(1);
     const q = trimmed.trim().toLowerCase();
-    if (!q) return [];
+    if (!q) return commandNames;
     return commandNames.filter(name => name.startsWith(q));
   };
 
+
   useEffect(() => {
     setSuggestions(computeSuggestions(input));
-  }, [input]);
+  }, [input, user]);
 
   const commands = {
     help: () => ({
@@ -40,6 +60,20 @@ export default function App() {
             <div><span className="prompt-symbol">/contact</span> - Get contact information</div>
             <div><span className="prompt-symbol">/skills</span> - View technical skills</div>
             <div><span className="prompt-symbol">/clear</span> - Clear terminal</div>
+            {!user && (
+              <div><span className="prompt-symbol">/login</span> - Developer login</div>
+            )}
+            {user && (
+              <>
+                <div style={{ marginTop: 12, color: 'var(--accent-cyan)' }}>
+                  <div className="subtle">Developer Commands:</div>
+                </div>
+                <div><span className="prompt-symbol">/logout</span> - Sign out</div>
+                <div><span className="prompt-symbol">/whoami</span> - Show current user</div>
+                <div><span className="prompt-symbol">/dev</span> - Developer tools</div>
+                <div><span className="prompt-symbol">/secret</span> - Show secret info</div>
+              </>
+            )}
           </div>
         </div>
       )
@@ -64,7 +98,6 @@ export default function App() {
       content: (
         <div>
           <div className="section-title">Resume</div>
-
           <div className="box">
             <div>
               <div className="subtle">Education</div>
@@ -80,7 +113,6 @@ export default function App() {
 
             <div style={{ marginTop: 20 }}>
               <div className="subtle">Experience</div>
-
               <div style={{ paddingLeft: 12 }}>
                 <div>
                   <div className="name-highlight">Robotics Software Developer</div>
@@ -168,51 +200,49 @@ export default function App() {
       )
     }),
 
-contact: () => ({
-  type: 'output',
-  content: (
-    <div>
-      <div className="section-title">Contact Information</div>
-      <div className="box">
+    contact: () => ({
+      type: 'output',
+      content: (
         <div>
-          <span className="prompt-symbol">Email:</span>{' '}
-          <a href="mailto:sarthak.gupta@ufl.edu" target="_blank" rel="noopener noreferrer">
-            sarthak.gupta@ufl.edu
-          </a>
+          <div className="section-title">Contact Information</div>
+          <div className="box">
+            <div>
+              <span className="prompt-symbol">Email:</span>{' '}
+              <a href="mailto:sarthak.gupta@ufl.edu" target="_blank" rel="noopener noreferrer">
+                sarthak.gupta@ufl.edu
+              </a>
+            </div>
+            <div>
+              <span className="prompt-symbol">LinkedIn:</span>{' '}
+              <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer">
+                linkedin.com/in/sarthak-gupta17
+              </a>
+            </div>
+            <div>
+              <span className="prompt-symbol">GitHub:</span>{' '}
+              <a href="https://github.com/sgupta1703" target="_blank" rel="noopener noreferrer">
+                github.com/sgupta1703
+              </a>
+            </div>
+            <div>
+              <span className="prompt-symbol">Personal Website:</span>{' '}
+              <a href="https://sarthak-dev-woad.vercel.app/" target="_blank" rel="noopener noreferrer">
+                sarthak.dev
+              </a>
+            </div>
+          </div>
+          <div className="subtle" style={{ marginTop: 8 }}>
+            Feel free to reach out for collaboration opportunities or just to say hello!
+          </div>
         </div>
-        <div>
-          <span className="prompt-symbol">LinkedIn:</span>{' '}
-          <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer">
-            linkedin.com/in/sarthak-gupta17
-          </a>
-        </div>
-        <div>
-          <span className="prompt-symbol">GitHub:</span>{' '}
-          <a href="https://github.com/sgupta1703" target="_blank" rel="noopener noreferrer">
-            github.com/sgupta1703
-          </a>
-        </div>
-        <div>
-          <span className="prompt-symbol">Personal Website:</span>{' '}
-          <a href="https://sarthak-dev-woad.vercel.app/" target="_blank" rel="noopener noreferrer">
-            sarthak.dev
-          </a>       
-        </div>
-      </div>
-      <div className="subtle" style={{ marginTop: 8 }}>
-        Feel free to reach out for collaboration opportunities or just to say hello!
-      </div>
-    </div>
-  )
-}),
-
+      )
+    }),
 
     skills: () => ({
       type: 'output',
       content: (
         <div>
           <div className="section-title">Technical Skills</div>
-
           <div className="box">
             <div style={{ marginBottom: 8 }}>
               <div className="subtle">Languages</div>
@@ -220,21 +250,18 @@ contact: () => ({
                 Java, Python, JavaScript, C++, MATLAB
               </div>
             </div>
-
             <div style={{ marginBottom: 8 }}>
               <div className="subtle">Frameworks & Platforms</div>
               <div style={{ paddingLeft: 12 }} className="subtle">
                 React.js, Node.js, Express.js, ROS2, GIS
               </div>
             </div>
-
             <div style={{ marginBottom: 8 }}>
               <div className="subtle">Tools & Technologies</div>
               <div style={{ paddingLeft: 12 }} className="subtle">
                 OpenCV, AWS Polly, Figma, Ubuntu, Linux
               </div>
             </div>
-
             <div>
               <div className="subtle">Developer Tools</div>
               <div style={{ paddingLeft: 12 }} className="subtle">
@@ -246,36 +273,199 @@ contact: () => ({
       )
     }),
 
-    clear: () => ({ type: 'clear' })
-  };
+    clear: () => ({ type: 'clear' }),
 
-  const handleSubmit = (rawInput) => {
-    if (!rawInput || !rawInput.trim()) return;
+    login: () => {
+      if (user) {
+        return {
+          type: 'output',
+          content: (
+            <div className="box">
+              <span className="name-highlight">Already logged in as:</span> {user.email}
+            </div>
+          )
+        };
+      }
+      setShowLogin(true);
+      return {
+        type: 'output',
+        content: (
+          <div className="box">
+            <div className="name-highlight">Opening login panel...</div>
+          </div>
+        )
+      };
+    },
 
-    const displayInput = rawInput;
-    const command = rawInput.toLowerCase().replace('/', '').trim();
-    const newHistoryEntry = { type: 'command', content: displayInput };
+    logout: () => {
+      if (!user) {
+        return {
+          type: 'error',
+          content: 'Not logged in. Use /login to authenticate.'
+        };
+      }
+      supabase.auth.signOut();
+      return {
+        type: 'output',
+        content: (
+          <div className="box">
+            <div className="name-highlight">Successfully logged out!</div>
+            <div className="subtle">Developer commands are now hidden.</div>
+          </div>
+        )
+      };
+    },
 
-    if (command === 'clear') {
-      setHistory([]);
-    } else if (commands[command]) {
+    whoami: () => {
+      if (!user) {
+        return {
+          type: 'error',
+          content: 'Access denied. Use /login to authenticate.'
+        };
+      }
+      return {
+        type: 'output',
+        content: (
+          <div>
+            <div className="section-title">Current User</div>
+            <div className="box">
+              <div><span className="prompt-symbol">Email:</span> {user.email}</div>
+              <div><span className="prompt-symbol">ID:</span> {user.id}</div>
+              <div><span className="prompt-symbol">Last Sign In:</span> {new Date(user.last_sign_in_at).toLocaleString()}</div>
+              <div><span className="prompt-symbol">Role:</span> <span className="name-highlight">Developer</span></div>
+            </div>
+          </div>
+        )
+      };
+    },
+
+    dev: () => {
+      if (!user) {
+        return {
+          type: 'error',
+          content: 'Access denied. Use /login to authenticate.'
+        };
+      }
+      return {
+        type: 'output',
+        content: (
+          <div>
+            <div className="section-title">Developer Tools</div>
+            <div className="box">
+              <div className="name-highlight">System Status</div>
+              <div style={{ paddingLeft: 12, marginTop: 6 }}>
+                <div><span className="prompt-symbol">React Version:</span> {React.version}</div>
+                <div><span className="prompt-symbol">Environment:</span> {process.env.NODE_ENV || 'development'}</div>
+                <div><span className="prompt-symbol">User Agent:</span> {navigator.userAgent.substring(0, 50)}...</div>
+                <div><span className="prompt-symbol">Commands in History:</span> {commandHistory.length}</div>
+              </div>
+            </div>
+          </div>
+        )
+      };
+    },
+
+    secret: () => {
+      if (!user) {
+        return {
+          type: 'error',
+          content: 'Access denied.'
+        };
+      }
+
+      const unique = new Set(commandHistory);
+      const first = commandHistory[0];
+      const last = commandHistory[commandHistory.length - 1];
+
+      return {
+        type: 'output',
+        content: (
+          <div>
+            <div className="section-title">Session Analytics</div>
+            <div className="box">
+              <div className="name-highlight">Session Insights</div>
+              <div style={{ paddingLeft: 12, marginTop: 6 }}>
+                <div>
+                  <span className="prompt-symbol">Total Commands:</span>{' '}
+                  <span className="name-highlight">{commandHistory.length}</span>
+                </div>
+                {first && (
+                  <div>
+                    <span className="prompt-symbol">First Command:</span>{' '}
+                    {first}
+                  </div>
+                )}
+                {last && (
+                  <div>
+                    <span className="prompt-symbol">Last Command:</span>{' '}
+                    {last}
+                  </div>
+                )}
+                <div>
+                  <span className="prompt-symbol">Approx Uptime:</span>{' '}
+                  {Math.round((performance.now() - siteLoadTime) / 1000)}s
+                </div>
+                <div>
+                  <span className="prompt-symbol">Screen:</span>{' '}
+                  {window.innerWidth}×{window.innerHeight}
+                </div>
+              </div>
+
+              <div className="subtle" style={{ marginTop: 16 }}>
+                Data is generated locally for this session only.
+              </div>
+            </div>
+          </div>
+        )
+      };
+    }};
+const handleSubmit = (rawInput) => {
+  if (!rawInput || !rawInput.trim()) return;
+
+  const displayInput = rawInput;
+  const newHistoryEntry = { type: 'command', content: displayInput };
+
+  if (!rawInput.startsWith('/')) {
+    setHistory(prev => [...prev, newHistoryEntry, {
+      type: 'error',
+      content: `Invalid input: "${displayInput}". Commands must start with /. Type /help for available commands.`
+    }]);
+    setCommandHistory(prev => [...prev, displayInput]);
+    setHistoryIndex(-1);
+    setInput('');
+    return;
+  }
+
+  const command = rawInput.slice(1).toLowerCase().trim();
+
+  if (command === 'clear') {
+    setHistory([]);
+  } else if (commands[command]) {
+    if (devCommands.includes(command) && command !== 'login' && !user) {
+      setHistory(prev => [...prev, newHistoryEntry, {
+        type: 'error',
+        content: 'Access denied. Developer command requires authentication. Use /login to access.'
+      }]);
+    } else {
       const result = commands[command]();
       if (result.type === 'clear') {
         setHistory([]);
       } else {
         setHistory(prev => [...prev, newHistoryEntry, result]);
       }
-    } else {
-      setHistory(prev => [...prev, newHistoryEntry, {
-        type: 'error',
-        content: `Command not found: ${displayInput}. Type /help for available commands.`
-      }]);
     }
+  } else {
+    setHistory(prev => [...prev, newHistoryEntry, {
+      type: 'error',
+      content: `Command not found: ${displayInput}. Type /help for available commands.`
+    }]);
+  }
 
-    setCommandHistory(prev => [...prev, displayInput]);
-    setHistoryIndex(-1);
-    setInput('');
-  };
+  setCommandHistory(prev => [...prev, displayInput]);
+  setHistoryIndex(-1);
+  setInput('');
+};
+
 
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -288,8 +478,7 @@ contact: () => ({
       if (suggestions && suggestions.length > 0) {
         e.preventDefault();
         const top = suggestions[0];
-        const trimmed = input.startsWith('/') ? input.slice(1) : input;
-        setInput((input.startsWith('/') ? '/' : '') + top);
+        setInput('/' + top);
       }
       return;
     }
@@ -328,19 +517,35 @@ contact: () => ({
   }, [history]);
 
   const topSuggestion = suggestions && suggestions.length > 0 ? suggestions[0] : null;
-
-  const trimmed = input.startsWith('/') ? input.slice(1) : input;
   let ghostRemaining = '';
-  if (topSuggestion && trimmed.toLowerCase() !== topSuggestion.toLowerCase() && trimmed.trim() !== '') {
-    ghostRemaining = topSuggestion.slice(trimmed.length);
+
+  if (topSuggestion && input.startsWith('/')) {
+    const trimmed = input.slice(1);
+    if (trimmed.toLowerCase() !== topSuggestion.toLowerCase() && trimmed.trim() !== '') {
+      ghostRemaining = topSuggestion.slice(trimmed.length);
+    }
   }
-
-
-  const ghostPrefix = input || ''; 
+  const ghostPrefix = input || '';
   const ghostText = ghostRemaining ? `${ghostPrefix}${ghostRemaining}` : '';
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    setHistory(prev => [...prev, {
+      type: 'output',
+      content: (
+        <div className="box">
+          <div className="name-highlight">Successfully authenticated!</div>
+          <div className="subtle">Developer commands are now available. Type /help to see them.</div>
+        </div>
+      )
+    }]);
+  };
 
   return (
-    <div className="app" onClick={() => inputRef.current?.focus()}>
+    <div className="app" onClick={(e) => {
+      if (!showLogin && !e.target.closest('.login-panel')) {
+        inputRef.current?.focus();
+      }
+    }}>
       <div className="terminal" ref={terminalRef}>
         <div className="terminal-header">
           <div className="traffic">
@@ -349,12 +554,14 @@ contact: () => ({
             <span className="btn green" />
           </div>
         </div>
-
         <div className="content">
           <div className="site-title">Sar·thak Gup·ta</div>
           <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
           <div className="subtitle">noun · proper</div>
-          <div className="tagline"><span className="name-highlight">Sarthak Gupta</span> — Thinker, Builder, Dreamer, Doer</div>
+          <div className="tagline">
+            <span className="name-highlight">Sarthak Gupta</span> — Thinker, Builder, Dreamer, Doer
+            {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 160 }}>👨‍💻 DEV MODE</span>}
+          </div>
 
           <div className="history">
             {history.map((item, index) => (
@@ -375,20 +582,28 @@ contact: () => ({
             ))}
           </div>
 
+          {showLogin && (
+            <div className="login-panel" style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+              <Login 
+                onClose={() => setShowLogin(false)}
+                onSuccess={handleLoginSuccess}
+              />
+            </div>
+          )}
+
           <div className="input-row" style={{ position: 'relative' }}>
             <span className="prompt-symbol">&gt;_</span>
-
             <div
               aria-hidden="true"
               style={{
                 position: 'absolute',
-                left: 36, 
-                top: 12, 
+                left: 36,
+                top: 12,
                 pointerEvents: 'none',
                 whiteSpace: 'pre',
                 fontFamily: 'inherit',
                 fontSize: '1rem',
-                color: 'rgba(200,200,200,0.45)', 
+                color: 'rgba(200,200,200,0.45)',
                 zIndex: 1,
                 userSelect: 'none'
               }}
@@ -396,7 +611,6 @@ contact: () => ({
               <span style={{ color: 'transparent' }}>{ghostPrefix}</span>
               {ghostRemaining ? <span>{ghostRemaining}</span> : null}
             </div>
-
             <input
               ref={inputRef}
               type="text"
