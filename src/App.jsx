@@ -226,8 +226,8 @@ export default function App() {
             </div>
             <div>
               <span className="prompt-symbol">Personal Website:</span>{' '}
-              <a href="https://sarthak-dev-woad.vercel.app/" target="_blank" rel="noopener noreferrer">
-                sarthak.dev
+              <a href="https://sarthak-dev-msdl.vercel.app/" target="_blank" rel="noopener noreferrer">
+                Terminal By Sarthak Gupta
               </a>
             </div>
           </div>
