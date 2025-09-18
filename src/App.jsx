@@ -560,7 +560,7 @@ const handleSubmit = (rawInput) => {
           <div className="subtitle">noun · proper</div>
           <div className="tagline">
             <span className="name-highlight">Sarthak Gupta</span> — Thinker, Builder, Dreamer, Doer
-            {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 160 }}>👨‍💻 DEV MODE</span>}
+            {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 160 }}>DEV MODE</span>}
           </div>
 
           <div className="history">
