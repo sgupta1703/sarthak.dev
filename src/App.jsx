@@ -157,7 +157,23 @@ export default function App() {
               <div style={{ paddingLeft: 12 }}>
                 <div>
                   <div className="name-highlight">
-                    J.A.R.V.I.S <span className="subtle">| Python, PyQt6, Vosk, Porcupine, Google Gemini API, OpenGL</span>
+                    J.A.R.V.I.S
+                    <span className="subtle">
+                      &nbsp;| Python, PyQt6, Vosk, Porcupine, Google Gemini API, OpenGL
+                    </span>
+                    <span className="subtle" style={{ marginLeft: 8 }}>
+                      (
+                      <a
+                        href="https://github.com/sgupta1703/J.A.R.V.I.S"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="subtle"
+                        style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}
+                      >
+                        See in GitHub
+                      </a>
+                      )
+                    </span>
                   </div>
                   <div className="subtle">June 2025 – Present</div>
                   <ul style={{ marginTop: 6 }}>
@@ -170,7 +186,23 @@ export default function App() {
 
                 <div style={{ marginTop: 12 }}>
                   <div className="name-highlight">
-                    ExpressCart <span className="subtle">| React.js, Node.js, Express.js, MongoDB, JWT</span>
+                    ExpressCart
+                    <span className="subtle">
+                      &nbsp;| React.js, Node.js, Express.js, MongoDB, JWT
+                    </span>
+                    <span className="subtle" style={{ marginLeft: 8 }}>
+                      (
+                      <a
+                        href="https://github.com/sgupta1703/Express-Cart"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="subtle"
+                        style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}
+                      >
+                        See in GitHub
+                      </a>
+                      )
+                    </span>
                   </div>
                   <div className="subtle">May 2025 – July 2025</div>
                   <ul style={{ marginTop: 6 }}>
@@ -180,10 +212,30 @@ export default function App() {
                     <li>Integrated JWT authentication and role-based authorization across the stack.</li>
                   </ul>
                 </div>
-
+{/* 
                 <div style={{ marginTop: 12 }}>
                   <div className="name-highlight">
                     Yoogle <span className="subtle">| React.js, Tailwind CSS, Python, FastAPI</span>
+                  </div> */}
+                <div>
+                  <div className="name-highlight">
+                    Yoogle
+                    <span className="subtle">
+                      &nbsp;| React.js, Tailwind CSS, Python, FastAPI
+                    </span>
+                    <span className="subtle" style={{ marginLeft: 8 }}>
+                      (
+                      <a
+                        href="https://github.com/jithenms/cop3530-project3"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="subtle"
+                        style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}
+                      >
+                        See in GitHub
+                      </a>
+                      )
+                    </span>
                   </div>
                   <div className="subtle">Mar 2025 – Apr 2025</div>
                   <ul style={{ marginTop: 6 }}>
