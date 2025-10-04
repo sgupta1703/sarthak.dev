@@ -154,6 +154,38 @@ export default function App() {
 
             <div style={{ marginTop: 20 }}>
               <div className="subtle">Projects</div>
+<div style={{ marginTop: 12 }}>
+  <div className="name-highlight">
+    PlayCast
+    <span className="subtle">
+      &nbsp;| React-Native, Expo, Node.js, Express.js, Google Gemini API, Firebase
+    </span>
+    <span className="subtle" style={{ marginLeft: 8 }}>
+      (
+      <a
+        href="https://github.com/sgupta1703/Playcast"  // <-- replace with repo link if available
+        target="_blank"
+        rel="noopener noreferrer"
+        className="subtle"
+        style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}
+      >
+        See in GitHub
+      </a>
+      )
+    </span>
+  </div>
+  <div className="subtle">Sept 2025 – Present</div>
+  <ul style={{ marginTop: 6 }}>
+    <li>Developed a mobile-first app delivering real-time TikTok/Instagram-style highlight reels from live sports, with a React Native frontend (expo-av, Reanimated) supporting low-latency playback, vertical reel navigation, and swipe-right panels for play context.</li>
+    <li>Implemented a Node.js + Express backend serving highlight videos and normalized metadata via REST endpoints, with per-sport directory mapping and range-enabled static media delivery.</li>
+    <li>Engineered a live-to-highlight pipeline with FFmpeg for ingest/trim, SportsRadar play-by-play for timestamp alignment, and Google Gemini API for NLP-based scoring and context generation.</li>
+    <li>Integrated Firebase Firestore to persist likes/skips/favorites, powering real-time personalization and adaptive feed ranking.</li>
+  </ul>
+</div>
+
+
+
+
               <div style={{ paddingLeft: 12 }}>
                 <div>
                   <div className="name-highlight">
