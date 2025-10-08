@@ -18,7 +18,6 @@ export default function App() {
   useEffect(() => {
     inputRef.current?.focus();
 
-    // Supabase v2-style getSession (may vary by SDK version)
     supabase.auth.getSession().then(({ data }) => {
       if (data?.session) setUser(data.session.user);
     });
@@ -30,7 +29,6 @@ export default function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // added 'certifications' and 'download' to public commands
   const publicCommands = ['help', 'me', 'resume', 'contact', 'skills', 'certifications', 'download', 'clear'];
   const devCommands = ['login', 'logout', 'whoami', 'dev', 'secret'];
   const commandNames = user ? [...publicCommands, ...devCommands] : [...publicCommands, 'login'];
@@ -47,7 +45,7 @@ export default function App() {
     setSuggestions(computeSuggestions(input));
   }, [input, user]);
 
-  const resumePdfUrl = '/Sarthak_Gupta_Resume.pdf'; // put the PDF in public/
+  const resumePdfUrl = '/Sarthak_Gupta_Resume.pdf'; 
 
   const certificationsContent = (
     <div>
@@ -182,7 +180,18 @@ export default function App() {
 
             <div style={{ marginTop: 20 }}>
               <div className="subtle">Projects</div>
-
+                <div style={{ paddingLeft: 12, marginTop: 12 }}>
+                <div className="name-highlight">
+                  Audionomous <span className="subtle">| Python, OpenCV, Google MediaPipe FaceMesh, PyCAW, Arduino Nicla Vision</span>
+                </div>
+                <div className="subtle">October 2025 – Present</div>
+                <ul style={{ marginTop: 6 }}>
+                  <li>Developed an AI-driven real-time vision–audio modulation system that adjusts headphone volume based on facial motion cues from an Arduino Nicla Vision Pro camera.</li>
+                  <li>Built a high-throughput USB-serial pipeline (30 FPS JPEG stream) with NICL framing, 32-bit big-endian length fields, buffered reads, and checksum validation for robust frame recovery under serial jitter.</li>
+                  <li>Implemented a facial dynamics pipeline using MediaPipe FaceMesh (468 landmarks) to compute mouth aspect ratio, jaw displacement, and rotation; applied temporal filtering (deque, EMA) achieving ~95% stable detection within &lt;200 ms latency</li>
+                  <li>Designed a multi-threaded PyCAW subsystem managing ISimpleAudioVolume sessions with asynchronous ramping, atomic cancellation, and safe restoration under concurrent process changes.</li>
+                </ul>
+              </div>
               <div style={{ marginTop: 12, paddingLeft: 12 }}>
                 <div className="name-highlight">
                   PlayCast <span className="subtle">| React Native, Expo, Node.js, Express.js, Google Gemini API, Firebase</span>
@@ -204,17 +213,6 @@ export default function App() {
                 <ul style={{ marginTop: 6 }}>
                   <li>Engineered a multithreaded Python voice assistant using pvporcupine for wake-word detection and Vosk + sounddevice for real-time STT.</li>
                   <li>Integrated Google Gemini API and WeatherAPI; optimized TTS with pyttsx3 and built a PyQt6 UI with an OpenGL waveform visualizer.</li>
-                </ul>
-              </div>
-
-              <div style={{ paddingLeft: 12, marginTop: 12 }}>
-                <div className="name-highlight">
-                  Yoogle <span className="subtle">| React.js, Tailwind CSS, Python, FastAPI</span>
-                </div>
-                <div className="subtle">Mar 2025 – Apr 2025</div>
-                <ul style={{ marginTop: 6 }}>
-                  <li>Implemented an autocomplete benchmarking system (Trie vs HashMap) and built a FastAPI backend with async endpoints for high-throughput suggestions.</li>
-                  <li>Preprocessed AOL query logs via Python regex for URL stripping and NSFW filtering; integrated a React + Tailwind frontend to visualize performance.</li>
                 </ul>
               </div>
             </div>
