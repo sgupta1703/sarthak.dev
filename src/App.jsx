@@ -700,7 +700,7 @@ export default function App() {
           <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
           <div className="subtitle">noun · proper</div>
           <div className="tagline">
-            <span className="name-highlight">Sarthak Gupta</span> — Dreamer, Thinker, Builder, Doer
+            <span className="name-highlight">Sarthak Gupta</span> — Dreamer, Thinker, Builder
             {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 160 }}>DEV MODE</span>}
           </div>
 
