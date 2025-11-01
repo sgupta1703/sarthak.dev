@@ -143,40 +143,57 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ marginTop: 20 }}>
-              <div className="subtle">Relevant Coursework</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                Introduction to Software Engineering • Virtual Reality • Information Systems • Data Structures & Algorithms • Computer Organization • Computational Linear Algebra • Multivariable Calculus • Discrete Structures • Principles of Macro & Microeconomics • Financial Accounting
-              </div>
-            </div>
+        <div style={{ marginTop: 20 }}>
+          <div className="subtle">Relevant Coursework</div>
+          <div style={{ paddingLeft: 12 }} className="subtle">
+            Introduction to Software Engineering • Introduction to Virtual Reality • Introduction to Information Systems • 
+            Data Structures and Algorithms • Introduction to Computer Organization • Computational Linear Algebra • 
+            Multivariable Calculus (III) • Discrete Structures • Information and Database Systems Design • 
+            Computer Network Fundamentals • Operating Systems
+          </div>
+        </div>
 
-            <div style={{ marginTop: 20 }}>
-              <div className="subtle">Experience</div>
 
-              <div style={{ paddingLeft: 12, marginTop: 8 }}>
-                <div className="name-highlight">Robotics Software Developer</div>
-                <div className="subtle">Machine Intelligence Lab @ University of Florida • January 2025 – Present</div>
-                <div className="subtle" style={{ marginTop: 6 }}>
-                  Integrated the Water-Linked Doppler Velocity Log (DVL) into the SubjuGator 9 autonomous maritime system using ROS2, Bash, Linux, Python, and C++, enabling enhanced navigation and localization capabilities. Resolved symbolic link installation issues in colcon build by addressing path resolution and build dependencies to ensure an error-free compilation environment. Advanced to the semifinals of RoboSub 2025 with SubjuGator 9.
-                </div>
-              </div>
+      <div style={{ marginTop: 20 }}>
+        <div className="subtle">Experience</div>
 
-              <div style={{ paddingLeft: 12, marginTop: 12 }}>
-                <div className="name-highlight">Human-Computer Interaction (HCI) Research Intern</div>
-                <div className="subtle">Virtual Experience Research Group (VERG) Lab @ University of Florida • May 2025 – Present</div>
-                <div className="subtle" style={{ marginTop: 6 }}>
-                  Designing an interactive virtual human training system for the U.S. Air Force focusing on sexual assault prevention workflows. Leveraging AWS Polly for speech synthesis and Synthesia for avatar-driven video modules. Prototyping conversational UI and user flows in Figma to align with human-centered design.
-                </div>
-              </div>
+        <div style={{ paddingLeft: 12, marginTop: 8 }}>
+          <div className="name-highlight">Robotics Software Developer</div>
+          <div className="subtle">
+            Machine Intelligence Lab @ University of Florida • January 2025 – Present
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Building a C++ Gazebo plugin for ROS2-based control of the SubjuGator 9 submarine’s gripper, integrating{" "}
+            <b>JointController</b> and <b>JointTrajectoryController</b> for <b>2-DOF</b> velocity and position control; enabling fully open–close actuation and trajectory-based manipulation within the SubjuGator simulation stack.
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Integrated the Water-Linked Doppler Velocity Log (DVL) into the submarine using Bash, Linux, Python, and C++; increased localization update rate to <b>10 Hz</b> and reduced drift from <b>12 m/hr</b> to <b>4 m/hr</b> during sea trials.
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Worked in the Software Team to help SubjuGator 9 reach the <b>semifinals of RoboSub 2025</b>, placing <b>12th out of 55</b> international teams by enhancing autonomy, sensor integration, and reliability.
+          </div>
+        </div>
 
-              <div style={{ paddingLeft: 12, marginTop: 12 }}>
-                <div className="name-highlight">Geospatial AI Intern</div>
-                <div className="subtle">Ecosystem Services AI Lab @ University of Florida • May 2025 – August 2025</div>
-                <div className="subtle" style={{ marginTop: 6 }}>
-                  Created image annotations and spatial labels using QGIS and ArcGIS Pro. Developed Python ETL scripts to acquire, clean, and process spatial datasets (Google Street View, OpenStreetMap, Flickr, U.S. Census, Google Earth Engine). Produced GIS visualizations using Matplotlib, ggplot2, and ArcGIS tools.
-                </div>
-              </div>
-            </div>
+        <div style={{ paddingLeft: 12, marginTop: 12 }}>
+          <div className="name-highlight">Human-Computer Interaction (HCI) Research Intern</div>
+          <div className="subtle">
+            Virtual Experience Research Group (VERG) Lab @ University of Florida • May 2025 – Present
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Designing an interactive virtual human training system for the U.S. Air Force focusing on sexual assault prevention workflows. Leveraging AWS Polly for speech synthesis and Synthesia for avatar-driven video modules. Prototyping conversational UI and user flows in Figma to align with human-centered design.
+          </div>
+        </div>
+
+        <div style={{ paddingLeft: 12, marginTop: 12 }}>
+          <div className="name-highlight">Geospatial AI Intern</div>
+          <div className="subtle">
+            Ecosystem Services AI Lab @ University of Florida • May 2025 – August 2025
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Created image annotations and spatial labels using QGIS and ArcGIS Pro. Developed Python ETL scripts to acquire, clean, and process spatial datasets (Google Street View, OpenStreetMap, Flickr, U.S. Census, Google Earth Engine). Produced GIS visualizations using Matplotlib, ggplot2, and ArcGIS tools.
+          </div>
+        </div>
+      </div>
 
             <div style={{ marginTop: 20 }}>
               <div className="subtle">Projects</div>
@@ -205,28 +222,58 @@ export default function App() {
                 </ul>
               </div>
 
-              <div style={{ paddingLeft: 12, marginTop: 12 }}>
-                <div className="name-highlight">
-                  J.A.R.V.I.S <span className="subtle">| Python, PyQt6, Vosk, Porcupine, Google Gemini API, OpenGL</span>
-                </div>
-                <div className="subtle">June 2025 – Present</div>
-                <ul style={{ marginTop: 6 }}>
-                  <li>Engineered a multithreaded Python voice assistant using pvporcupine for wake-word detection and Vosk + sounddevice for real-time STT.</li>
-                  <li>Integrated Google Gemini API and WeatherAPI; optimized TTS with pyttsx3 and built a PyQt6 UI with an OpenGL waveform visualizer.</li>
-                </ul>
-              </div>
+<div style={{ paddingLeft: 12, marginTop: 12 }}>
+  <div className="name-highlight">
+    J.A.R.V.I.S{" "}
+    <span className="subtle">
+      | Python, PyQt6, Vosk, Porcupine, Google Gemini API, OpenGL
+    </span>
+  </div>
+  <div className="subtle">June 2025 – Present</div>
+  <ul style={{ marginTop: 6 }}>
+    <li>
+      Engineered a multithreaded Python voice assistant using pvporcupine for
+      low-latency wake-word detection and Vosk + sounddevice for offline
+      real-time speech-to-text.
+    </li>
+    <li>
+      Integrated Google’s Gemini API for contextual NLP interactions and
+      WeatherAPI with IP-based geolocation; optimized TTS using <code>pyttsx3</code> with
+      voice customization.
+    </li>
+    <li>
+      Developed a PyQt6 interface featuring a real-time OpenGL-based waveform
+      visualizer and animated UI elements for conversational feedback.
+    </li>
+    <li>
+      Implemented extensible voice-command handlers supporting file system
+      operations and common system controls (lock, screenshot, app launch, etc.).
+    </li>
+  </ul>
+</div>
+
             </div>
 
-            <div style={{ marginTop: 20 }}>
-              <div className="subtle">Technical Skills</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                <div><strong>Languages:</strong> Java, Python, JavaScript, C++, MATLAB</div>
-                <div style={{ marginTop: 6 }}><strong>Frameworks & Platforms:</strong> React.js, Node.js, Express.js, ROS2, GIS, React Native, Expo, Firebase, Supabase</div>
-                <div style={{ marginTop: 6 }}><strong>Tools & Tech:</strong> OpenCV, AWS Polly, Figma, Ubuntu, Linux</div>
-                <div style={{ marginTop: 6 }}><strong>Developer Tools:</strong> Git, VS Code, PyCharm, IntelliJ, Eclipse</div>
-                <div style={{ marginTop: 6 }}><strong>Methodologies:</strong> SDLC, Agile, Scrum</div>
-              </div>
-            </div>
+<div style={{ marginTop: 20 }}>
+  <div className="subtle">Technical Skills</div>
+  <div style={{ paddingLeft: 12 }} className="subtle">
+    <div>
+      <strong>Languages:</strong> Java, Python, JavaScript, C++, MATLAB
+    </div>
+    <div style={{ marginTop: 6 }}>
+      <strong>Frameworks & Platforms:</strong> TypeScript, Angular.js, React.js, Node.js, Express.js, ROS2, React Native, Expo, Firebase, Supabase, GIS
+    </div>
+    <div style={{ marginTop: 6 }}>
+      <strong>Tools & Technologies:</strong> Git, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
+    </div>
+    <div style={{ marginTop: 6 }}>
+      <strong>Developer Tools:</strong> Git, VS Code, PyCharm, IntelliJ, Eclipse
+    </div>
+    <div style={{ marginTop: 6 }}>
+      <strong>Methodologies:</strong> SDLC, Agile, Scrum
+    </div>
+  </div>
+</div>
 
             <div style={{ marginTop: 20 }}>
               <div className="subtle">Certifications</div>
@@ -297,7 +344,7 @@ export default function App() {
           <div className="box">
             <div>
               <span className="prompt-symbol">Email:</span>{' '}
-              <a href="mailto:sarthak.gupta@ufl.edu" target="_blank" rel="noopener noreferrer">sarthak.gupta@ufl.edu</a>
+              <a href="mailto:sarthakgupta1703@gmail.com" target="_blank" rel="noopener noreferrer">sarthakgupta1703@gmail.com</a>
             </div>
             <div>
               <span className="prompt-symbol">LinkedIn:</span>{' '}
@@ -323,33 +370,44 @@ export default function App() {
       type: 'output',
       content: (
         <div>
-          <div className="section-title">Technical Skills</div>
-          <div className="box">
-            <div style={{ marginBottom: 8 }}>
-              <div className="subtle">Languages</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                Java, Python, JavaScript, C++, MATLAB
-              </div>
-            </div>
-            <div style={{ marginBottom: 8 }}>
-              <div className="subtle">Frameworks & Platforms</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                React.js, Node.js, Express.js, ROS2, GIS, React Native, Expo, Firebase, Supabase
-              </div>
-            </div>
-            <div style={{ marginBottom: 8 }}>
-              <div className="subtle">Tools & Technologies</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                OpenCV, AWS Polly, Figma, Ubuntu, Linux
-              </div>
-            </div>
-            <div>
-              <div className="subtle">Developer Tools</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                Git, VS Code, PyCharm, IntelliJ, Eclipse
-              </div>
-            </div>
-          </div>
+<div className="section-title">Technical Skills</div>
+<div className="box">
+  <div style={{ marginBottom: 8 }}>
+    <div className="subtle">Languages</div>
+    <div style={{ paddingLeft: 12 }} className="subtle">
+      Java, Python, JavaScript, C++, MATLAB
+    </div>
+  </div>
+
+  <div style={{ marginBottom: 8 }}>
+    <div className="subtle">Frameworks & Platforms</div>
+    <div style={{ paddingLeft: 12 }} className="subtle">
+      TypeScript, Angular.js, React.js, Node.js, Express.js, ROS2, React Native, Expo, Firebase, Supabase, GIS
+    </div>
+  </div>
+
+  <div style={{ marginBottom: 8 }}>
+    <div className="subtle">Tools & Technologies</div>
+    <div style={{ paddingLeft: 12 }} className="subtle">
+      Git, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
+    </div>
+  </div>
+
+  <div style={{ marginBottom: 8 }}>
+    <div className="subtle">Developer Tools</div>
+    <div style={{ paddingLeft: 12 }} className="subtle">
+      Git, VS Code, PyCharm, IntelliJ, Eclipse
+    </div>
+  </div>
+
+  <div>
+    <div className="subtle">Methodologies</div>
+    <div style={{ paddingLeft: 12 }} className="subtle">
+      SDLC, Agile, Scrum
+    </div>
+  </div>
+</div>
+
         </div>
       )
     }),
