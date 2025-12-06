@@ -162,35 +162,48 @@ export default function App() {
           <div className="subtle">
             Machine Intelligence Lab @ University of Florida • January 2025 – Present
           </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Building a C++ Gazebo plugin for ROS2-based control of the SubjuGator 9 submarine’s gripper, integrating{" "}
-            <b>JointController</b> and <b>JointTrajectoryController</b> for <b>2-DOF</b> velocity and position control; enabling fully open–close actuation and trajectory-based manipulation within the SubjuGator simulation stack.
+            <div className="subtle" style={{ marginTop: 6 }}>
+              Developing a C++ Gazebo plugin within the ROS2 control framework for the SubjuGator 9 submarine’s gripper, integrating{" "}
+              <b>JointController</b> and <b>JointTrajectoryController</b> for <b>2-DOF</b> velocity and position control; enabling full open–close actuation and trajectory-based manipulation in simulation.
+            </div>
+            <div className="subtle" style={{ marginTop: 6 }}>
+              Integrated a Water-Linked Doppler Velocity Log (DVL) into the submarine using Bash, Linux, Python, and C++; increased localization update rate to <b>10 Hz</b> and reduced drift from <b>12 m/hr</b> to <b>4 m/hr</b> during sea trials.
+            </div>
+            <div className="subtle" style={{ marginTop: 6 }}>
+              Contributed to the Software Team in advancing SubjuGator 9 to the <b>semifinals of RoboSub 2025</b>, ranking <b>12th of 55</b> international teams by improving autonomy, sensor fusion, and reliability.
+            </div>
           </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Integrated the Water-Linked Doppler Velocity Log (DVL) into the submarine using Bash, Linux, Python, and C++; increased localization update rate to <b>10 Hz</b> and reduced drift from <b>12 m/hr</b> to <b>4 m/hr</b> during sea trials.
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Worked in the Software Team to help SubjuGator 9 reach the <b>semifinals of RoboSub 2025</b>, placing <b>12th out of 55</b> international teams by enhancing autonomy, sensor integration, and reliability.
-          </div>
-        </div>
 
         <div style={{ paddingLeft: 12, marginTop: 12 }}>
-          <div className="name-highlight">Human-Computer Interaction (HCI) Research Intern</div>
+          <div className="name-highlight">Undergraduate Researcher</div>
           <div className="subtle">
             Virtual Experience Research Group (VERG) Lab @ University of Florida • May 2025 – Present
           </div>
           <div className="subtle" style={{ marginTop: 6 }}>
-            Designing an interactive virtual human training system for the U.S. Air Force focusing on sexual assault prevention workflows. Leveraging AWS Polly for speech synthesis and Synthesia for avatar-driven video modules. Prototyping conversational UI and user flows in Figma to align with human-centered design.
+            Developing an end-to-end AI video generation pipeline in ComfyUI for the U.S. Air Force, producing training content for cadets on sexual assault prevention.
           </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Deploying and scaling the pipeline on Hipergator High Performance Computing (HPC), processing <b>500 GB</b> of raw video and image data and generating <b>200</b> training videos with automated text, voice, and visual effects.
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Configuring and running multi-node <b>Slurm</b> jobs on Hipergator, parallelizing <b>CUDA</b> workflows to accelerate AI model inference and video synthesis.
+          </div>
+
         </div>
 
         <div style={{ paddingLeft: 12, marginTop: 12 }}>
-          <div className="name-highlight">Geospatial AI Intern</div>
+          <div className="name-highlight">AI Developer Intern</div>
           <div className="subtle">
-            Ecosystem Services AI Lab @ University of Florida • May 2025 – August 2025
+            Florida Resource Map Project @ Florida Community Innovation (FCI) Foundation • October 2025 – Present
           </div>
           <div className="subtle" style={{ marginTop: 6 }}>
-            Created image annotations and spatial labels using QGIS and ArcGIS Pro. Developed Python ETL scripts to acquire, clean, and process spatial datasets (Google Street View, OpenStreetMap, Flickr, U.S. Census, Google Earth Engine). Produced GIS visualizations using Matplotlib, ggplot2, and ArcGIS tools.
+            Designing and deploying LLM-driven agentic pipelines using <b>LangChain</b>, <b>OpenAI APIs</b>, and <b>Python</b> to autonomously extract, validate, and structure non-profit and government service data from unstructured web sources.
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Building web scraping and data-cleaning pipelines to process over <b>5,000</b> resource listings related to food, housing, and mental health; improving data coverage by <b>35%</b>.
+          </div>
+          <div className="subtle" style={{ marginTop: 6 }}>
+            Implementing a retrieval-augmented generation (RAG) system with vector search for resource recommendations, increasing query accuracy and contextual relevance by <b>40%</b>.
           </div>
         </div>
       </div>
@@ -253,21 +266,17 @@ export default function App() {
 </div>
 
             </div>
-
 <div style={{ marginTop: 20 }}>
   <div className="subtle">Technical Skills</div>
   <div style={{ paddingLeft: 12 }} className="subtle">
     <div>
-      <strong>Languages:</strong> Java, Python, JavaScript, C++, MATLAB
+      <strong>Languages:</strong> Java, Python, JavaScript, C++, R, MATLAB
     </div>
     <div style={{ marginTop: 6 }}>
-      <strong>Frameworks & Platforms:</strong> TypeScript, Angular.js, React.js, Node.js, Express.js, ROS2, React Native, Expo, Firebase, Supabase, GIS
+      <strong>Frameworks & Platforms:</strong> TypeScript, Angular.js, React.js, Node.js, Express.js, LangChain, FastAPI, TensorFlow, Robotics Operating System 2 (ROS2), PyTorch, React Native, Expo, Firebase, MongoDB, GIS
     </div>
     <div style={{ marginTop: 6 }}>
-      <strong>Tools & Technologies:</strong> Git, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
-    </div>
-    <div style={{ marginTop: 6 }}>
-      <strong>Developer Tools:</strong> Git, VS Code, PyCharm, IntelliJ, Eclipse
+      <strong>Tools & Technologies:</strong> Git, NVIDIA Isaac Sim, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
     </div>
     <div style={{ marginTop: 6 }}>
       <strong>Methodologies:</strong> SDLC, Agile, Scrum
@@ -366,51 +375,46 @@ export default function App() {
       )
     }),
 
-    skills: () => ({
-      type: 'output',
-      content: (
-        <div>
-<div className="section-title">Technical Skills</div>
-<div className="box">
-  <div style={{ marginBottom: 8 }}>
-    <div className="subtle">Languages</div>
-    <div style={{ paddingLeft: 12 }} className="subtle">
-      Java, Python, JavaScript, C++, MATLAB
-    </div>
-  </div>
+skills: () => ({
+  type: 'output',
+  content: (
+    <div>
+      <div className="section-title">Technical Skills</div>
+      <div className="box">
 
-  <div style={{ marginBottom: 8 }}>
-    <div className="subtle">Frameworks & Platforms</div>
-    <div style={{ paddingLeft: 12 }} className="subtle">
-      TypeScript, Angular.js, React.js, Node.js, Express.js, ROS2, React Native, Expo, Firebase, Supabase, GIS
-    </div>
-  </div>
-
-  <div style={{ marginBottom: 8 }}>
-    <div className="subtle">Tools & Technologies</div>
-    <div style={{ paddingLeft: 12 }} className="subtle">
-      Git, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
-    </div>
-  </div>
-
-  <div style={{ marginBottom: 8 }}>
-    <div className="subtle">Developer Tools</div>
-    <div style={{ paddingLeft: 12 }} className="subtle">
-      Git, VS Code, PyCharm, IntelliJ, Eclipse
-    </div>
-  </div>
-
-  <div>
-    <div className="subtle">Methodologies</div>
-    <div style={{ paddingLeft: 12 }} className="subtle">
-      SDLC, Agile, Scrum
-    </div>
-  </div>
-</div>
-
+        <div style={{ marginBottom: 8 }}>
+          <div className="subtle">Languages</div>
+          <div style={{ paddingLeft: 12 }} className="subtle">
+            Java, Python, JavaScript, C++, R, MATLAB
+          </div>
         </div>
-      )
-    }),
+
+        <div style={{ marginBottom: 8 }}>
+          <div className="subtle">Frameworks & Platforms</div>
+          <div style={{ paddingLeft: 12 }} className="subtle">
+            TypeScript, Angular.js, React.js, Node.js, Express.js, LangChain, FastAPI, TensorFlow, Robotics Operating System 2 (ROS2), PyTorch, React Native, Expo, Firebase, MongoDB, GIS
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 8 }}>
+          <div className="subtle">Tools & Technologies</div>
+          <div style={{ paddingLeft: 12 }} className="subtle">
+            Git, NVIDIA Isaac Sim, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
+          </div>
+        </div>
+
+        <div>
+          <div className="subtle">Methodologies</div>
+          <div style={{ paddingLeft: 12 }} className="subtle">
+            SDLC, Agile, Scrum
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}),
+
 
     clear: () => ({ type: 'clear' }),
 
