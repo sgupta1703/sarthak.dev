@@ -47,30 +47,38 @@ export default function App() {
 
   const resumePdfUrl = '/Sarthak_Gupta_Resume.pdf'; 
 
-  const certificationsContent = (
-    <div>
-      <div style={{ marginBottom: 8 }}>
-        <div className="name-highlight">Building Transformer-Based Natural Language Processing Applications</div>
-        <div>Provider: NVIDIA • July 2025</div>
-        <div>Credential ID: pF329a7-SwSyOeTLS-WONQ</div>
-        <div style={{ marginTop: 6 }}>Completed hands-on projects on fine-tuning Transformer-based LLMs and building NLP pipelines using PyTorch.</div>
-      </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <div className="name-highlight">Fundamentals of Deep Learning</div>
-        <div>Provider: NVIDIA • July 2025</div>
-        <div>Credential ID: OeT9FHBJR-CqIfoSys60yw</div>
-        <div style={{ marginTop: 6 }}>Practical understanding of neural networks, CNNs, and transfer learning with PyTorch.</div>
-      </div>
-
-      <div>
-        <div className="name-highlight">Intermediate Web Development (WEB102)</div>
-        <div>Provider: CodePath • May 2025</div>
-        <div>Credential ID: 293245</div>
-        <div style={{ marginTop: 6 }}>Intermediate training on modern frontend frameworks, backend integration, and responsive design.</div>
-      </div>
+const certificationsContent = (
+  <div>
+    <div style={{ marginBottom: 8 }}>
+      <div className="name-highlight">Building Transformer-Based Natural Language Processing Applications</div>
+      <div>Provider: NVIDIA • July 2025</div>
+      <div>Credential ID: pF329a7-SwSyOeTLS-WONQ</div>
+      <div style={{ marginTop: 6 }}>Completed hands-on projects on fine-tuning Transformer-based LLMs and building NLP pipelines using PyTorch.</div>
     </div>
-  );
+
+    <div style={{ marginBottom: 8 }}>
+      <div className="name-highlight">AWS Certified AI Practitioner</div>
+      <div>Provider: AWS • December 2025</div>
+      <div>Credential ID: [Your Credential ID]</div>
+      <div style={{ marginTop: 6 }}>Validated knowledge of AI services on AWS, including machine learning workflows, AI model deployment, and practical application in cloud environments.</div>
+    </div>
+
+    <div style={{ marginBottom: 8 }}>
+      <div className="name-highlight">Fundamentals of Deep Learning</div>
+      <div>Provider: NVIDIA • July 2025</div>
+      <div>Credential ID: OeT9FHBJR-CqIfoSys60yw</div>
+      <div style={{ marginTop: 6 }}>Practical understanding of neural networks, CNNs, and transfer learning with PyTorch.</div>
+    </div>
+
+    <div>
+      <div className="name-highlight">Intermediate Web Development (WEB102)</div>
+      <div>Provider: CodePath • May 2025</div>
+      <div>Credential ID: 293245</div>
+      <div style={{ marginTop: 6 }}>Intermediate training on modern frontend frameworks, backend integration, and responsive design.</div>
+    </div>
+  </div>
+);
+  
 
   const commands = {
     help: () => ({
@@ -139,7 +147,7 @@ export default function App() {
               <div className="subtle">Education</div>
               <div style={{ paddingLeft: 12 }}>
                 <div className="name-highlight">Bachelor of Science in Computer Science, Minor in Accounting</div>
-                <div className="subtle">University of Florida • Aug 2024 – Dec 2027 • GPA: 3.55</div>
+                <div className="subtle">University of Florida • Aug 2024 – Dec 2027 • GPA: 3.68</div>
               </div>
             </div>
 
