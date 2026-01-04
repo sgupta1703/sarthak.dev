@@ -708,14 +708,22 @@ skills: () => ({
           </div>
         </div>
         <div className="content">
-          <div className="site-title">Sar·thak Gup·ta</div>
-          <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
-          <div className="subtitle">noun · proper</div>
-          <div className="tagline">
-            <span className="name-highlight">Sarthak Gupta</span> — Dreamer, Thinker, Builder
-            {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 160 }}>DEV MODE</span>}
+          <div className="header-row">
+            <div className="header-left">
+              <div className="site-title">Sar·thak Gup·ta</div>
+              <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
+              <div className="subtitle">noun · proper</div>
+              <div className="tagline">
+                <span className="name-highlight">Sarthak Gupta</span> — Dreamer, Thinker, Builder
+                {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 12 }}>DEV MODE</span>}
+              </div>
+            </div>
+            <div className="header-right">
+              <div className="profile-wrap">
+                <a href="https://www.linkedin.com/in/sarthak-gupta17/" target='_blank'><img src="/image.jpeg" alt="Sarthak Gupta" className="profile-image" /></a>
+              </div>
+            </div>
           </div>
-
           <div className="history">
             {history.map((item, index) => (
               <div key={index} className="item">

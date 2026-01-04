@@ -215,3 +215,47 @@ body {
 .terminal a:hover {
   text-decoration: underline;
 }
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+.header-left {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+.profile-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0 0 0 12px;
+}
+.profile-image {
+  width: clamp(96px, 12vw, 140px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.04);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.02) inset, 0 0 0 6px rgba(59,130,246,0.035);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.profile-image:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.75), 0 0 0 8px rgba(59,130,246,0.08);
+}
+
+@media (max-width: 640px) {
+  .profile-image { width: clamp(88px, 28vw, 110px); aspect-ratio: 1 / 1; }
+  .header-row { flex-direction: column; align-items: flex-start; }
+  .header-right { width: 100%; display: flex; justify-content: flex-start; margin-top: 10px; }
+}
