@@ -59,7 +59,7 @@ const certificationsContent = (
     <div style={{ marginBottom: 8 }}>
       <div className="name-highlight">AWS Certified AI Practitioner</div>
       <div>Provider: AWS • December 2025</div>
-      <div>Credential ID: [Your Credential ID]</div>
+      <div>Credential ID: 3316d26f08ff4362be7da9b1f091f4ac</div>
       <div style={{ marginTop: 6 }}>Validated knowledge of AI services on AWS, including machine learning workflows, AI model deployment, and practical application in cloud environments.</div>
     </div>
 
