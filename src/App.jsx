@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { supabase } from "./Components/supabaseClient";
 import Login from "./Components/Login";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [input, setInput] = useState('');
@@ -793,6 +794,7 @@ skills: () => ({
           )}
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
