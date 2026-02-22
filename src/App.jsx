@@ -1,798 +1,489 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { supabase } from "./Components/supabaseClient";
-import Login from "./Components/Login";
 
-export default function App() {
-  const [input, setInput] = useState('');
-  const [history, setHistory] = useState([]);
-  const [commandHistory, setCommandHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showLogin, setShowLogin] = useState(false);
-  const [user, setUser] = useState(null);
-  const [siteLoadTime] = useState(performance.now());
-  const inputRef = useRef(null);
-  const terminalRef = useRef(null);
+function useInView(threshold = 0.08) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
+}
+
+function Reveal({ children, delay = 0, y = 40, className = '' }) {
+  const [ref, inView] = useInView();
+  return (
+    <div ref={ref} className={`reveal ${inView ? 'reveal-in' : ''} ${className}`}
+      style={{ '--delay': `${delay}ms`, '--y': `${y}px` }}>
+      {children}
+    </div>
+  );
+}
+
+
+
+function MagneticBtn({ children, href, className = '', download }) {
+  const btnRef = useRef(null);
+  const onMove = e => {
+    const b = btnRef.current.getBoundingClientRect();
+    btnRef.current.style.transform = `translate(${(e.clientX - b.left - b.width / 2) * 0.3}px, ${(e.clientY - b.top - b.height / 2) * 0.3}px)`;
+  };
+  const onLeave = () => { btnRef.current.style.transform = ''; };
+  return (
+    <a ref={btnRef} href={href} target={download ? '_self' : '_blank'} rel="noopener noreferrer"
+      download={download} className={`magnetic-btn ${className}`}
+      onMouseMove={onMove} onMouseLeave={onLeave}>
+      {children}
+    </a>
+  );
+}
+
+function TiltCard({ children, className = '' }) {
+  const cardRef = useRef(null);
+  const glowRef = useRef(null);
+  const onMove = e => {
+    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - left) / width;
+    const y = (e.clientY - top) / height;
+    cardRef.current.style.transform = `perspective(900px) rotateX(${(y - 0.5) * -12}deg) rotateY(${(x - 0.5) * 12}deg) scale3d(1.02,1.02,1.02)`;
+    glowRef.current.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(201,162,86,0.2), transparent 65%)`;
+  };
+  const onLeave = () => {
+    cardRef.current.style.transform = '';
+    glowRef.current.style.background = 'transparent';
+  };
+  return (
+    <div ref={cardRef} className={`tilt-card ${className}`} onMouseMove={onMove} onMouseLeave={onLeave}>
+      <div ref={glowRef} className="tilt-glow" />
+      {children}
+    </div>
+  );
+}
+
+const MARQUEE_ITEMS = [
+  'Python', 'C++', 'ROS2', 'PyTorch', 'LangChain', 'React', 'Node.js',
+  'Computer Vision', 'NLP', 'Robotics', 'CUDA', 'FastAPI', 'TensorFlow',
+  'React Native', 'OpenCV', 'Agile', 'RAG', 'Agentic AI', 'AWS', 'Firebase', 'MongoDB', 'ComfyUI',
+];
+function Marquee() {
+  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  return (
+    <div className="marquee-wrap" aria-hidden="true">
+      <div className="marquee-track">
+        {doubled.map((item, i) => (
+          <span key={i} className="marquee-item">
+            {item}<span className="marquee-sep">✦</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+  const links = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
+  const scrollTo = id => { document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' }); setOpen(false); };
+  return (
+    <nav className={`nav ${scrolled ? 'nav-scrolled' : ''}`}>
+      <div className="nav-inner">
+        <div className="nav-logo" role="button" tabIndex={0} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          SG
+        </div>
+        <div className={`nav-links ${open ? 'nav-open' : ''}`}>
+          {links.map(l => <button key={l} className="nav-link" onClick={() => scrollTo(l)}>{l}</button>)}
+          <a href="/Sarthak_Gupta_Resume.pdf" download className="nav-cta">Resume ↓</a>
+        </div>
+        <button className={`nav-burger ${open ? 'burger-active' : ''}`} onClick={() => setOpen(o => !o)} aria-label="Menu">
+          <span /><span /><span />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+function Hero() {
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => { const t = setTimeout(() => setLoaded(true), 120); return () => clearTimeout(t); }, []);
 
   useEffect(() => {
-    inputRef.current?.focus();
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (data?.session) setUser(data.session.user);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => setUser(session?.user ?? null)
-    );
-
-    return () => listener.subscription.unsubscribe();
+    const el = imgRef.current;
+    if (!el) return;
+    const fn = e => {
+      const dx = (e.clientX / window.innerWidth - 0.5);
+      const dy = (e.clientY / window.innerHeight - 0.5);
+      el.style.transform = `translate(${dx * -18}px, ${dy * -18}px)`;
+    };
+    window.addEventListener('mousemove', fn);
+    return () => window.removeEventListener('mousemove', fn);
   }, []);
 
-  const publicCommands = ['help', 'me', 'resume', 'contact', 'skills', 'certifications', 'download', 'clear'];
-  const devCommands = ['login', 'logout', 'whoami', 'dev', 'secret'];
-  const commandNames = user ? [...publicCommands, ...devCommands] : [...publicCommands, 'login'];
-
-  const computeSuggestions = (rawInput) => {
-    if (!rawInput.startsWith('/')) return [];
-    const trimmed = rawInput.slice(1);
-    const q = trimmed.trim().toLowerCase();
-    if (!q) return commandNames;
-    return commandNames.filter(name => name.startsWith(q));
-  };
-
-  useEffect(() => {
-    setSuggestions(computeSuggestions(input));
-  }, [input, user]);
-
-  const resumePdfUrl = '/Sarthak_Gupta_Resume.pdf'; 
-
-const certificationsContent = (
-  <div>
-    <div style={{ marginBottom: 8 }}>
-      <div className="name-highlight">Building Transformer-Based Natural Language Processing Applications</div>
-      <div>Provider: NVIDIA • July 2025</div>
-      <div>Credential ID: pF329a7-SwSyOeTLS-WONQ</div>
-      <div style={{ marginTop: 6 }}>Completed hands-on projects on fine-tuning Transformer-based LLMs and building NLP pipelines using PyTorch.</div>
-    </div>
-
-    <div style={{ marginBottom: 8 }}>
-      <div className="name-highlight">AWS Certified AI Practitioner</div>
-      <div>Provider: AWS • December 2025</div>
-      <div>Credential ID: 3316d26f08ff4362be7da9b1f091f4ac</div>
-      <div style={{ marginTop: 6 }}>Validated knowledge of AI services on AWS, including machine learning workflows, AI model deployment, and practical application in cloud environments.</div>
-    </div>
-
-    <div style={{ marginBottom: 8 }}>
-      <div className="name-highlight">Fundamentals of Deep Learning</div>
-      <div>Provider: NVIDIA • July 2025</div>
-      <div>Credential ID: OeT9FHBJR-CqIfoSys60yw</div>
-      <div style={{ marginTop: 6 }}>Practical understanding of neural networks, CNNs, and transfer learning with PyTorch.</div>
-    </div>
-
-    <div>
-      <div className="name-highlight">Intermediate Web Development (WEB102)</div>
-      <div>Provider: CodePath • May 2025</div>
-      <div>Credential ID: 293245</div>
-      <div style={{ marginTop: 6 }}>Intermediate training on modern frontend frameworks, backend integration, and responsive design.</div>
-    </div>
-  </div>
-);
-  
-
-  const commands = {
-    help: () => ({
-      type: 'output',
-      content: (
-        <div>
-          <div className="section-title">Available commands:</div>
-          <div className="box">
-            <div><span className="prompt-symbol">/help</span> - Show this help message</div>
-            <div><span className="prompt-symbol">/me</span> - Learn about Me</div>
-            <div><span className="prompt-symbol">/resume</span> - View resume</div>
-            <div><span className="prompt-symbol">/certifications</span> - View certifications</div>
-            <div><span className="prompt-symbol">/download</span> - Download resume (PDF)</div>
-            <div><span className="prompt-symbol">/contact</span> - Get contact information</div>
-            <div><span className="prompt-symbol">/skills</span> - View technical skills</div>
-            <div><span className="prompt-symbol">/clear</span> - Clear terminal</div>
-            {!user && <div><span className="prompt-symbol">/login</span> - Developer login</div>}
-            {user && (
-              <>
-                <div style={{ marginTop: 12, color: 'var(--accent-cyan)' }}>
-                  <div className="subtle">Developer Commands:</div>
-                </div>
-                <div><span className="prompt-symbol">/logout</span> - Sign out</div>
-                <div><span className="prompt-symbol">/whoami</span> - Show current user</div>
-                <div><span className="prompt-symbol">/dev</span> - Developer tools</div>
-                <div><span className="prompt-symbol">/secret</span> - Show secret info</div>
-              </>
-            )}
-          </div>
-        </div>
-      )
-    }),
-
-    me: () => ({
-      type: 'output',
-      content: (
-        <div>
-          <div className="section-title">About Sarthak Gupta</div>
-          <div className="box">
-            <p>Hello! I'm a sophomore at the University of Florida pursuing a degree in Computer Science.</p>
-            <p>I have a strong foundation in computer science and problem-solving, with interests in Machine Learning — especially Computer Vision and Natural Language Processing.</p>
-            <p>P.S. I like playing Tennis and Pickle Ball.</p>
-          </div>
-        </div>
-      )
-    }),
-
-    resume: () => ({
-      type: 'output',
-      content: (
-        <div>
-          <div className="section-title">Resume — Sarthak Gupta</div>
-          <div className="box">
-            <div>
-              <div className="subtle">Contact</div>
-              <div style={{ paddingLeft: 12 }}>
-                <div className="name-highlight">813-501-9744 • sarthakgupta1703@gmail.com</div>
-                <div className="subtle">
-                  <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer">linkedin.com/in/sarthak-gupta17</a> •{' '}
-                  <a href="https://github.com/sgupta1703" target="_blank" rel="noopener noreferrer">github.com/sgupta1703</a>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 12 }}>
-              <div className="subtle">Education</div>
-              <div style={{ paddingLeft: 12 }}>
-                <div className="name-highlight">Bachelor of Science in Computer Science, Minor in Accounting</div>
-                <div className="subtle">University of Florida • Aug 2024 – Dec 2027 • GPA: 3.68</div>
-              </div>
-            </div>
-
-        <div style={{ marginTop: 20 }}>
-          <div className="subtle">Relevant Coursework</div>
-          <div style={{ paddingLeft: 12 }} className="subtle">
-            Introduction to Software Engineering • Introduction to Virtual Reality • Introduction to Information Systems • 
-            Data Structures and Algorithms • Introduction to Computer Organization • Computational Linear Algebra • 
-            Multivariable Calculus (III) • Discrete Structures • Information and Database Systems Design • 
-            Computer Network Fundamentals • Operating Systems
-          </div>
-        </div>
-
-
-      <div style={{ marginTop: 20 }}>
-        <div className="subtle">Experience</div>
-
-        <div style={{ paddingLeft: 12, marginTop: 8 }}>
-          <div className="name-highlight">Robotics Software Developer</div>
-          <div className="subtle">
-            Machine Intelligence Lab @ University of Florida • January 2025 – Present
-          </div>
-            <div className="subtle" style={{ marginTop: 6 }}>
-              Developing a C++ Gazebo plugin within the ROS2 control framework for the SubjuGator 9 submarine’s gripper, integrating{" "}
-              <b>JointController</b> and <b>JointTrajectoryController</b> for <b>2-DOF</b> velocity and position control; enabling full open–close actuation and trajectory-based manipulation in simulation.
-            </div>
-            <div className="subtle" style={{ marginTop: 6 }}>
-              Integrated a Water-Linked Doppler Velocity Log (DVL) into the submarine using Bash, Linux, Python, and C++; increased localization update rate to <b>10 Hz</b> and reduced drift from <b>12 m/hr</b> to <b>4 m/hr</b> during sea trials.
-            </div>
-            <div className="subtle" style={{ marginTop: 6 }}>
-              Contributed to the Software Team in advancing SubjuGator 9 to the <b>semifinals of RoboSub 2025</b>, ranking <b>12th of 55</b> international teams by improving autonomy, sensor fusion, and reliability.
-            </div>
-          </div>
-
-        <div style={{ paddingLeft: 12, marginTop: 12 }}>
-          <div className="name-highlight">Undergraduate Researcher</div>
-          <div className="subtle">
-            Virtual Experience Research Group (VERG) Lab @ University of Florida • May 2025 – Present
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Developing an end-to-end AI video generation pipeline in ComfyUI for the U.S. Air Force, producing training content for cadets on sexual assault prevention.
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Deploying and scaling the pipeline on Hipergator High Performance Computing (HPC), processing <b>500 GB</b> of raw video and image data and generating <b>200</b> training videos with automated text, voice, and visual effects.
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Configuring and running multi-node <b>Slurm</b> jobs on Hipergator, parallelizing <b>CUDA</b> workflows to accelerate AI model inference and video synthesis.
-          </div>
-
-        </div>
-
-        <div style={{ paddingLeft: 12, marginTop: 12 }}>
-          <div className="name-highlight">AI Developer Intern</div>
-          <div className="subtle">
-            Florida Resource Map Project @ Florida Community Innovation (FCI) Foundation • October 2025 – Present
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Designing and deploying LLM-driven agentic pipelines using <b>LangChain</b>, <b>OpenAI APIs</b>, and <b>Python</b> to autonomously extract, validate, and structure non-profit and government service data from unstructured web sources.
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Building web scraping and data-cleaning pipelines to process over <b>5,000</b> resource listings related to food, housing, and mental health; improving data coverage by <b>35%</b>.
-          </div>
-          <div className="subtle" style={{ marginTop: 6 }}>
-            Implementing a retrieval-augmented generation (RAG) system with vector search for resource recommendations, increasing query accuracy and contextual relevance by <b>40%</b>.
-          </div>
-        </div>
-      </div>
-
-            <div style={{ marginTop: 20 }}>
-              <div className="subtle">Projects</div>
-                <div style={{ paddingLeft: 12, marginTop: 12 }}>
-                <div className="name-highlight">
-                  Audionomous <span className="subtle">| Python, OpenCV, Google MediaPipe FaceMesh, PyCAW, Arduino Nicla Vision</span>
-                </div>
-                <div className="subtle">October 2025 – Present</div>
-                <ul style={{ marginTop: 6 }}>
-                  <li>Developed an AI-driven real-time vision–audio modulation system that adjusts headphone volume based on facial motion cues from an Arduino Nicla Vision Pro camera.</li>
-                  <li>Built a high-throughput USB-serial pipeline (30 FPS JPEG stream) with NICL framing, 32-bit big-endian length fields, buffered reads, and checksum validation for robust frame recovery under serial jitter.</li>
-                  <li>Implemented a facial dynamics pipeline using MediaPipe FaceMesh (468 landmarks) to compute mouth aspect ratio, jaw displacement, and rotation; applied temporal filtering (deque, EMA) achieving ~95% stable detection within &lt;200 ms latency</li>
-                  <li>Designed a multi-threaded PyCAW subsystem managing ISimpleAudioVolume sessions with asynchronous ramping, atomic cancellation, and safe restoration under concurrent process changes.</li>
-                </ul>
-              </div>
-              <div style={{ marginTop: 12, paddingLeft: 12 }}>
-                <div className="name-highlight">
-                  PlayCast <span className="subtle">| React Native, Expo, Node.js, Express.js, Google Gemini API, Firebase</span>
-                </div>
-                <div className="subtle">Sept 2025 – Present</div>
-                <ul style={{ marginTop: 6 }}>
-                  <li>Developed a mobile-first app delivering real-time TikTok/Instagram-style highlight reels from live sports (React Native, expo-av, Reanimated).</li>
-                  <li>Implemented a Node.js + Express backend serving highlight videos and normalized metadata via REST endpoints and range-enabled static media delivery.</li>
-                  <li>Engineered an FFmpeg-based live-to-highlight pipeline and used SportsRadar timestamps + Google Gemini for NLP-based scoring/context.</li>
-                  <li>Integrated Firebase Firestore for user interactions and personalization.</li>
-                </ul>
-              </div>
-
-<div style={{ paddingLeft: 12, marginTop: 12 }}>
-  <div className="name-highlight">
-    J.A.R.V.I.S{" "}
-    <span className="subtle">
-      | Python, PyQt6, Vosk, Porcupine, Google Gemini API, OpenGL
-    </span>
-  </div>
-  <div className="subtle">June 2025 – Present</div>
-  <ul style={{ marginTop: 6 }}>
-    <li>
-      Engineered a multithreaded Python voice assistant using pvporcupine for
-      low-latency wake-word detection and Vosk + sounddevice for offline
-      real-time speech-to-text.
-    </li>
-    <li>
-      Integrated Google’s Gemini API for contextual NLP interactions and
-      WeatherAPI with IP-based geolocation; optimized TTS using <code>pyttsx3</code> with
-      voice customization.
-    </li>
-    <li>
-      Developed a PyQt6 interface featuring a real-time OpenGL-based waveform
-      visualizer and animated UI elements for conversational feedback.
-    </li>
-    <li>
-      Implemented extensible voice-command handlers supporting file system
-      operations and common system controls (lock, screenshot, app launch, etc.).
-    </li>
-  </ul>
-</div>
-
-            </div>
-<div style={{ marginTop: 20 }}>
-  <div className="subtle">Technical Skills</div>
-  <div style={{ paddingLeft: 12 }} className="subtle">
-    <div>
-      <strong>Languages:</strong> Java, Python, JavaScript, C++, R, MATLAB
-    </div>
-    <div style={{ marginTop: 6 }}>
-      <strong>Frameworks & Platforms:</strong> TypeScript, Angular.js, React.js, Node.js, Express.js, LangChain, FastAPI, TensorFlow, Robotics Operating System 2 (ROS2), PyTorch, React Native, Expo, Firebase, MongoDB, GIS
-    </div>
-    <div style={{ marginTop: 6 }}>
-      <strong>Tools & Technologies:</strong> Git, NVIDIA Isaac Sim, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
-    </div>
-    <div style={{ marginTop: 6 }}>
-      <strong>Methodologies:</strong> SDLC, Agile, Scrum
-    </div>
-  </div>
-</div>
-
-            <div style={{ marginTop: 20 }}>
-              <div className="subtle">Certifications</div>
-              <div style={{ paddingLeft: 12 }} className="subtle">
-                {certificationsContent}
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )
-    }),
-
-    certifications: () => ({
-      type: 'output',
-      content: (
-        <div>
-          <div className="section-title">Certifications</div>
-          <div className="box">
-            {certificationsContent}
-          </div>
-        </div>
-      )
-    }),
-
-    download: () => {
-      // try to open the PDF in a new tab / trigger download (user-initiated, so popup blockers should not block)
-      try {
-        // open in new tab
-        window.open(resumePdfUrl, '_blank', 'noopener,noreferrer');
-      } catch (err) {
-        // ignore; we'll still render a clickable link
-        // console.warn('Could not open resume automatically', err);
-      }
-
-      return {
-        type: 'output',
-        content: (
-          <div>
-            <div className="section-title">Download Resume</div>
-            <div className="box">
-              <div>
-                <div className="subtle">Click to download:</div>
-                <div style={{ marginTop: 8 }}>
-                  <a
-                    href={resumePdfUrl}
-                    download="Sarthak_Gupta_Resume.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="subtle"
-                    style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}
-                  >
-                    Download Sarthak_Gupta_Resume.pdf
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      };
-    },
-
-    contact: () => ({
-      type: 'output',
-      content: (
-        <div>
-          <div className="section-title">Contact Information</div>
-          <div className="box">
-            <div>
-              <span className="prompt-symbol">Email:</span>{' '}
-              <a href="mailto:sarthakgupta1703@gmail.com" target="_blank" rel="noopener noreferrer">sarthakgupta1703@gmail.com</a>
-            </div>
-            <div>
-              <span className="prompt-symbol">LinkedIn:</span>{' '}
-              <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer">linkedin.com/in/sarthak-gupta17</a>
-            </div>
-            <div>
-              <span className="prompt-symbol">GitHub:</span>{' '}
-              <a href="https://github.com/sgupta1703" target="_blank" rel="noopener noreferrer">github.com/sgupta1703</a>
-            </div>
-            <div>
-              <span className="prompt-symbol">Personal Website:</span>{' '}
-              <a href="https://sarthak-dev-msdl.vercel.app/" target="_blank" rel="noopener noreferrer">Terminal By Sarthak Gupta</a>
-            </div>
-          </div>
-          <div className="subtle" style={{ marginTop: 8 }}>
-            Feel free to reach out for collaboration opportunities or just to say hello!
-          </div>
-        </div>
-      )
-    }),
-
-skills: () => ({
-  type: 'output',
-  content: (
-    <div>
-      <div className="section-title">Technical Skills</div>
-      <div className="box">
-
-        <div style={{ marginBottom: 8 }}>
-          <div className="subtle">Languages</div>
-          <div style={{ paddingLeft: 12 }} className="subtle">
-            Java, Python, JavaScript, C++, R, MATLAB
-          </div>
-        </div>
-
-        <div style={{ marginBottom: 8 }}>
-          <div className="subtle">Frameworks & Platforms</div>
-          <div style={{ paddingLeft: 12 }} className="subtle">
-            TypeScript, Angular.js, React.js, Node.js, Express.js, LangChain, FastAPI, TensorFlow, Robotics Operating System 2 (ROS2), PyTorch, React Native, Expo, Firebase, MongoDB, GIS
-          </div>
-        </div>
-
-        <div style={{ marginBottom: 8 }}>
-          <div className="subtle">Tools & Technologies</div>
-          <div style={{ paddingLeft: 12 }} className="subtle">
-            Git, NVIDIA Isaac Sim, OpenCV, OpenMV, AWS Polly, Figma, Ubuntu/Linux, QGIS, ArcGIS Pro
-          </div>
-        </div>
-
-        <div>
-          <div className="subtle">Methodologies</div>
-          <div style={{ paddingLeft: 12 }} className="subtle">
-            SDLC, Agile, Scrum
-          </div>
-        </div>
-
-      </div>
-    </div>
-  )
-}),
-
-
-    clear: () => ({ type: 'clear' }),
-
-    login: () => {
-      if (user) {
-        return {
-          type: 'output',
-          content: (
-            <div className="box">
-              <span className="name-highlight">Already logged in as:</span> {user.email}
-            </div>
-          )
-        };
-      }
-      setShowLogin(true);
-      return {
-        type: 'output',
-        content: (
-          <div className="box">
-            <div className="name-highlight">Opening login panel...</div>
-          </div>
-        )
-      };
-    },
-
-    logout: () => {
-      if (!user) {
-        return {
-          type: 'error',
-          content: 'Not logged in. Use /login to authenticate.'
-        };
-      }
-      supabase.auth.signOut();
-      return {
-        type: 'output',
-        content: (
-          <div className="box">
-            <div className="name-highlight">Successfully logged out!</div>
-            <div className="subtle">Developer commands are now hidden.</div>
-          </div>
-        )
-      };
-    },
-
-    whoami: () => {
-      if (!user) {
-        return {
-          type: 'error',
-          content: 'Access denied. Use /login to authenticate.'
-        };
-      }
-      return {
-        type: 'output',
-        content: (
-          <div>
-            <div className="section-title">Current User</div>
-            <div className="box">
-              <div><span className="prompt-symbol">Email:</span> {user.email}</div>
-              <div><span className="prompt-symbol">ID:</span> {user.id}</div>
-              <div><span className="prompt-symbol">Last Sign In:</span> {new Date(user.last_sign_in_at).toLocaleString()}</div>
-              <div><span className="prompt-symbol">Role:</span> <span className="name-highlight">Developer</span></div>
-            </div>
-          </div>
-        )
-      };
-    },
-
-    dev: () => {
-      if (!user) {
-        return {
-          type: 'error',
-          content: 'Access denied. Use /login to authenticate.'
-        };
-      }
-      return {
-        type: 'output',
-        content: (
-          <div>
-            <div className="section-title">Developer Tools</div>
-            <div className="box">
-              <div className="name-highlight">System Status</div>
-              <div style={{ paddingLeft: 12, marginTop: 6 }}>
-                <div><span className="prompt-symbol">React Version:</span> {React.version}</div>
-                <div><span className="prompt-symbol">Environment:</span> {process.env.NODE_ENV || 'development'}</div>
-                <div><span className="prompt-symbol">User Agent:</span> {navigator.userAgent.substring(0, 50)}...</div>
-                <div><span className="prompt-symbol">Commands in History:</span> {commandHistory.length}</div>
-              </div>
-            </div>
-          </div>
-        )
-      };
-    },
-
-    secret: () => {
-      if (!user) {
-        return {
-          type: 'error',
-          content: 'Access denied.'
-        };
-      }
-
-      const unique = new Set(commandHistory);
-      const first = commandHistory[0];
-      const last = commandHistory[commandHistory.length - 1];
-
-      return {
-        type: 'output',
-        content: (
-          <div>
-            <div className="section-title">Session Analytics</div>
-            <div className="box">
-              <div className="name-highlight">Session Insights</div>
-              <div style={{ paddingLeft: 12, marginTop: 6 }}>
-                <div>
-                  <span className="prompt-symbol">Total Commands:</span>{' '}
-                  <span className="name-highlight">{commandHistory.length}</span>
-                </div>
-                {first && (
-                  <div>
-                    <span className="prompt-symbol">First Command:</span>{' '}
-                    {first}
-                  </div>
-                )}
-                {last && (
-                  <div>
-                    <span className="prompt-symbol">Last Command:</span>{' '}
-                    {last}
-                  </div>
-                )}
-                <div>
-                  <span className="prompt-symbol">Approx Uptime:</span>{' '}
-                  {Math.round((performance.now() - siteLoadTime) / 1000)}s
-                </div>
-                <div>
-                  <span className="prompt-symbol">Screen:</span>{' '}
-                  {window.innerWidth}×{window.innerHeight}
-                </div>
-              </div>
-
-              <div className="subtle" style={{ marginTop: 16 }}>
-                Data is generated locally for this session only.
-              </div>
-            </div>
-          </div>
-        )
-      };
-    }
-  }; // end commands
-
-  const handleSubmit = (rawInput) => {
-    if (!rawInput || !rawInput.trim()) return;
-
-    const displayInput = rawInput;
-    const newHistoryEntry = { type: 'command', content: displayInput };
-
-    if (!rawInput.startsWith('/')) {
-      setHistory(prev => [...prev, newHistoryEntry, {
-        type: 'error',
-        content: `Invalid input: "${displayInput}". Commands must start with /. Type /help for available commands.`
-      }]);
-      setCommandHistory(prev => [...prev, displayInput]);
-      setHistoryIndex(-1);
-      setInput('');
-      return;
-    }
-
-    const command = rawInput.slice(1).toLowerCase().trim();
-
-    if (command === 'clear') {
-      setHistory([]);
-    } else if (commands[command]) {
-      if (devCommands.includes(command) && command !== 'login' && !user) {
-        setHistory(prev => [...prev, newHistoryEntry, {
-          type: 'error',
-          content: 'Access denied. Developer command requires authentication. Use /login to access.'
-        }]);
-      } else {
-        const result = commands[command]();
-        if (result.type === 'clear') {
-          setHistory([]);
-        } else {
-          setHistory(prev => [...prev, newHistoryEntry, result]);
-        }
-      }
-    } else {
-      setHistory(prev => [...prev, newHistoryEntry, {
-        type: 'error',
-        content: `Command not found: ${displayInput}. Type /help for available commands.`
-      }]);
-    }
-
-    setCommandHistory(prev => [...prev, displayInput]);
-    setHistoryIndex(-1);
-    setInput('');
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSubmit(input);
-      return;
-    }
-
-    if (e.key === 'Tab') {
-      if (suggestions && suggestions.length > 0) {
-        e.preventDefault();
-        const top = suggestions[0];
-        setInput('/' + top);
-      }
-      return;
-    }
-
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (commandHistory.length === 0) return;
-      const nextIndex = historyIndex === -1 ? commandHistory.length - 1 : Math.max(0, historyIndex - 1);
-      setHistoryIndex(nextIndex);
-      setInput(commandHistory[nextIndex]);
-      return;
-    }
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (commandHistory.length === 0) return;
-      if (historyIndex === -1) {
-        return;
-      }
-      const nextIndex = historyIndex + 1;
-      if (nextIndex >= commandHistory.length) {
-        setHistoryIndex(-1);
-        setInput('');
-      } else {
-        setHistoryIndex(nextIndex);
-        setInput(commandHistory[nextIndex]);
-      }
-      return;
-    }
-  };
-
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [history]);
-
-  const topSuggestion = suggestions && suggestions.length > 0 ? suggestions[0] : null;
-  let ghostRemaining = '';
-
-  if (topSuggestion && input.startsWith('/')) {
-    const trimmed = input.slice(1);
-    if (trimmed.toLowerCase() !== topSuggestion.toLowerCase() && trimmed.trim() !== '') {
-      ghostRemaining = topSuggestion.slice(trimmed.length);
-    }
-  }
-  const ghostPrefix = input || '';
-  const ghostText = ghostRemaining ? `${ghostPrefix}${ghostRemaining}` : '';
-
-  const handleLoginSuccess = () => {
-    setShowLogin(false);
-    setHistory(prev => [...prev, {
-      type: 'output',
-      content: (
-        <div className="box">
-          <div className="name-highlight">Successfully authenticated!</div>
-          <div className="subtle">Developer commands are now available. Type /help to see them.</div>
-        </div>
-      )
-    }]);
-  };
-
   return (
-    <div className="app" onClick={(e) => {
-      if (!showLogin && !e.target.closest('.login-panel')) {
-        inputRef.current?.focus();
-      }
-    }}>
-      <div className="terminal" ref={terminalRef}>
-        <div className="terminal-header">
-          <div className="traffic">
-            <span className="btn red" />
-            <span className="btn yellow" />
-            <span className="btn green" />
+    <section className="hero">
+      <div className="hero-bg">
+        <div className="hero-orb orb-1" />
+        <div className="hero-orb orb-2" />
+        <div className="noise" />
+      </div>
+      <div className={`hero-content ${loaded ? 'hero-loaded' : ''}`}>
+        <div className="hero-eyebrow">
+          <span className="eyebrow-line" />
+          Computer Science · University of Florida · Class of 2027
+          <span className="eyebrow-line" />
+        </div>
+        <h1 className="hero-name">
+          <span className="name-line">SARTHAK</span>
+          <span className="name-line name-gold">GUPTA</span>
+        </h1>
+        <p className="hero-sub">Robotics · AI · Full-Stack · Researcher</p>
+        <div className="hero-desc">
+          Building intelligent systems at the intersection of machine learning,
+          robotics, and software engineering.
+        </div>
+        <div className="hero-actions">
+          <MagneticBtn href="https://www.linkedin.com/in/sarthak-gupta17/" className="btn-primary">LinkedIn ↗</MagneticBtn>
+          <MagneticBtn href="https://github.com/sgupta1703" className="btn-ghost">GitHub ↗</MagneticBtn>
+        </div>
+      </div>
+      <div className={`hero-img-wrap ${loaded ? 'hero-loaded' : ''}`} ref={imgRef}>
+        <div className="hero-img-ring" />
+        <div className="hero-img-ring ring-2" />
+        <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer">
+          <img src="/image.jpeg" alt="Sarthak Gupta" className="hero-img" />
+        </a>
+      </div>
+      <div className="scroll-hint">
+        <div className="scroll-line" />
+        <span>Scroll</span>
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section id="about" className="section">
+      <div className="container">
+        <Reveal><div className="section-label">01 — About</div></Reveal>
+        <div className="about-grid">
+          <div className="about-left-col">
+            <Reveal delay={100}>
+              <h2 className="section-heading">Dreamer.<br />Thinker.<br /><em>Builder.</em></h2>
+            </Reveal>
+            <Reveal delay={200}>
+              <div className="gpa-badge">
+                <span className="gpa-num">3.68 GPA</span>
+                <span className="gpa-divider" />
+                <span className="gpa-label">University of Florida</span>
+              </div>
+            </Reveal>
+          </div>
+          <div className="about-text-col">
+            <Reveal delay={250}>
+              <p className="about-p">
+                I'm a sophomore at the <span className="gold">University of Florida</span> pursuing
+                a B.S. in Computer Science with a minor in Accounting.
+              </p>
+            </Reveal>
+            <Reveal delay={340}>
+              <p className="about-p">
+                My interests lie in <span className="gold">Machine Learning</span>, particularly Computer Vision
+                and Natural Language Processing, alongside Robotics and full-stack software engineering.
+                I love working on problems at the edge of what's possible.
+              </p>
+            </Reveal>
+            <Reveal delay={420}>
+              <p className="about-p">
+                In my free time, you'll find me on the tennis court or pickleball court.
+              </p>
+            </Reveal>
+            <Reveal delay={500}>
+              <div className="about-courses">
+                <div className="courses-label">Relevant Coursework</div>
+                <div className="courses-grid">
+                  {['Data Structures & Algorithms', 'Operating Systems', 'Computer Networks', 'Database Systems', 'Linear Algebra', 'Discrete Structures', 'Virtual Reality', 'Software Engineering', 'Programming Language Concepts'].map(c => (
+                    <span key={c} className="course-tag">{c}</span>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
-        <div className="content">
-          <div className="header-row">
-            <div className="header-left">
-              <div className="site-title">Sar·thak Gup·ta</div>
-              <div className="phonetic">/ˈsɑːr-thək ˈɡʊp-tə/</div>
-              <div className="subtitle">noun · proper</div>
-              <div className="tagline">
-                <span className="name-highlight">Sarthak Gupta</span> — Dreamer, Thinker, Builder
-                {user && <span style={{ color: 'var(--accent-cyan)', marginLeft: 12 }}>DEV MODE</span>}
-              </div>
-            </div>
-            <div className="header-right">
-              <div className="profile-wrap">
-                <a href="https://www.linkedin.com/in/sarthak-gupta17/" target='_blank'><img src="/image.jpeg" alt="Sarthak Gupta" className="profile-image" /></a>
-              </div>
-            </div>
+      </div>
+    </section>
+  );
+}
+
+const EXPERIENCE = [
+  {
+    role: 'Robotics Software Developer',
+    org: 'Machine Intelligence Lab @ UF',
+    period: 'Jan 2025 – Present',
+    tag: 'Research',
+    bullets: [
+      'Developing a C++ Gazebo plugin within the ROS2 control framework for SubjuGator 9\'s gripper, integrating JointController and JointTrajectoryController for 2-DOF velocity and position control.',
+      'Integrated a Water-Linked DVL using Bash, Linux, Python and C++; increased localization to 10 Hz and reduced drift from 12 m/hr → 4 m/hr during sea trials.',
+      'Advanced SubjuGator 9 to the semifinals of RoboSub 2025, ranking 12th of 55 international teams.',
+    ],
+  },
+  {
+    role: 'Undergraduate Researcher',
+    org: 'VERG Lab @ University of Florida',
+    period: 'May 2025 – Present',
+    tag: 'Research',
+    bullets: [
+      'Developing an end-to-end AI video generation pipeline in ComfyUI for the U.S. Air Force, producing cadet training content on sexual assault prevention.',
+      'Deployed on HiPerGator HPC processing 500 GB of raw data and generating 200 training videos with automated text, voice, and visual effects.',
+      'Research abstract accepted to the 2nd Annual Digital Health Symposium at UF/FSU.',
+    ],
+  },
+  {
+    role: 'AI Developer Intern',
+    org: 'Florida Community Innovation Foundation',
+    period: 'Oct 2025 – Present',
+    tag: 'Industry',
+    bullets: [
+      'Designing LLM-driven agentic pipelines with LangChain, OpenAI APIs, and Python to autonomously extract and structure non-profit service data from unstructured web sources.',
+      'Built scraping pipelines processing 5,000+ resource listings; improved data coverage by 35%.',
+      'Implemented a RAG system with vector search for resource recommendations, increasing query accuracy by 40%.',
+    ],
+  },
+];
+
+function Experience() {
+  const [active, setActive] = useState(0);
+  return (
+    <section id="experience" className="section section-dark">
+      <div className="container">
+        <Reveal><div className="section-label">02 — Experience</div></Reveal>
+        <Reveal delay={100}><h2 className="section-heading">Where I've<br /><em>Worked & Researched</em></h2></Reveal>
+        <div className="exp-layout">
+          <div className="exp-tabs">
+            {EXPERIENCE.map((e, i) => (
+              <button key={i} className={`exp-tab ${active === i ? 'exp-tab-active' : ''}`} onClick={() => setActive(i)}>
+                <span className="exp-tab-tag">{e.tag}</span>
+                <span className="exp-tab-role">{e.role}</span>
+                <span className="exp-tab-org">{e.org}</span>
+              </button>
+            ))}
           </div>
-          <div className="history">
-            {history.map((item, index) => (
-              <div key={index} className="item">
-                {item.type === 'command' && (
-                  <div className="command-row">
-                    <span className="prompt-symbol">&gt;_</span>
-                    <span className="command-text">{item.content}</span>
+          <div className="exp-content">
+            {EXPERIENCE.map((e, i) => (
+              <div key={i} className={`exp-panel ${active === i ? 'exp-panel-active' : ''}`}>
+                <div className="exp-header">
+                  <div>
+                    <div className="exp-role">{e.role}</div>
+                    <div className="exp-org">{e.org}</div>
                   </div>
-                )}
-                {item.type === 'output' && (
-                  <div className="output">{item.content}</div>
-                )}
-                {item.type === 'error' && (
-                  <div className="error">{item.content}</div>
-                )}
+                  <div className="exp-period">{e.period}</div>
+                </div>
+                <ul className="exp-bullets">
+                  {e.bullets.map((b, j) => (
+                    <li key={j} className="exp-bullet" style={{ animationDelay: `${j * 80}ms` }}>{b}</li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
-
-          {showLogin && (
-            <div className="login-panel" style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
-              <Login
-                onClose={() => setShowLogin(false)}
-                onSuccess={handleLoginSuccess}
-              />
-            </div>
-          )}
-
-          <div className="input-row" style={{ position: 'relative' }}>
-            <span className="prompt-symbol">&gt;_</span>
-            <div
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                left: 36,
-                top: 12,
-                pointerEvents: 'none',
-                whiteSpace: 'pre',
-                fontFamily: 'inherit',
-                fontSize: '1rem',
-                color: 'rgba(200,200,200,0.45)',
-                zIndex: 1,
-                userSelect: 'none'
-              }}
-            >
-              <span style={{ color: 'transparent' }}>{ghostPrefix}</span>
-              {ghostRemaining ? <span>{ghostRemaining}</span> : null}
-            </div>
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                setHistoryIndex(-1);
-              }}
-              onKeyDown={onKeyDown}
-              className="input"
-              autoComplete="off"
-              spellCheck="false"
-              style={{ position: 'relative', zIndex: 2 }}
-            />
-          </div>
-
-          {history.length === 0 && !input && (
-            <div className="hint">type /help to see a list of commands</div>
-          )}
         </div>
       </div>
-    </div>
+    </section>
+  );
+}
+
+const PROJECTS = [
+  {
+    name: 'Audionomous',
+    stack: 'Python · OpenCV · MediaPipe · PyCAW · Arduino',
+    period: 'Oct 2025 – Present',
+    desc: 'AI-driven real-time vision–audio modulation system adjusting headphone volume from facial motion cues at 30 FPS via USB-serial with ~95% detection stability under 200ms latency.',
+    bullets: [
+      'High-throughput serial pipeline with NICL framing and checksum validation',
+      'MediaPipe FaceMesh (468 landmarks) with EMA temporal filtering',
+      'Multi-threaded PyCAW subsystem with atomic cancellation and async ramping',
+    ],
+    index: '01',
+  },
+  {
+    name: 'PlayCast',
+    stack: 'React Native · Node.js · FFmpeg · Gemini API · Firebase',
+    period: 'Sep 2025 – Present',
+    desc: 'Cross-platform mobile app delivering TikTok-style real-time highlight reels from live sports using SportsRadar timestamps + Gemini NLP for automated clip scoring.',
+    bullets: [
+      'Live-to-highlight FFmpeg pipeline with automated clip trimming',
+      'REST backend with range-enabled media streaming',
+      'Firebase Firestore for user interactions and personalization',
+    ],
+    index: '02',
+  },
+  {
+    name: 'J.A.R.V.I.S',
+    stack: 'Python · PyQt6 · Vosk · Porcupine · Gemini API · OpenGL',
+    period: 'Jun 2025 – Present',
+    desc: 'Multithreaded offline voice assistant with wake-word detection, real-time speech-to-text, and a PyQt6 interface featuring an OpenGL waveform visualizer.',
+    bullets: [
+      'Low-latency wake-word detection with pvporcupine',
+      'Gemini API integration for contextual NLP + WeatherAPI geolocation',
+      'Extensible voice-command handlers for system controls and file operations',
+    ],
+    index: '03',
+  },
+];
+
+function Projects() {
+  return (
+    <section id="projects" className="section">
+      <div className="container">
+        <Reveal><div className="section-label">03 — Projects</div></Reveal>
+        <Reveal delay={100}><h2 className="section-heading">Selected<br /><em>Works</em></h2></Reveal>
+        <div className="projects-grid">
+          {PROJECTS.map((p, i) => (
+            <Reveal key={p.name} delay={i * 120}>
+              <TiltCard className="project-card">
+                <div className="project-top">
+                  <span className="project-index">{p.index}</span>
+                  <span className="project-period">{p.period}</span>
+                </div>
+                <div className="project-name">{p.name}</div>
+                <div className="project-stack">{p.stack}</div>
+                <p className="project-desc">{p.desc}</p>
+                <ul className="project-bullets">
+                  {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                </ul>
+                <div className="project-line" />
+              </TiltCard>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const SKILLS = {
+  Languages: ['Java', 'Python', 'JavaScript', 'C++', 'R', 'MATLAB'],
+  'Frameworks & Platforms': ['React.js', 'React Native', 'Node.js', 'Express.js', 'LangChain', 'FastAPI', 'TensorFlow', 'PyTorch', 'ROS2', 'Firebase', 'MongoDB', 'Angular.js', 'TypeScript', 'Expo'],
+  'Tools & Tech': ['Git', 'OpenCV', 'NVIDIA Isaac Sim', 'AWS Polly', 'Figma', 'Ubuntu/Linux', 'QGIS', 'ArcGIS Pro', 'ComfyUI', 'CUDA / Slurm'],
+  Methodologies: ['Agile / Scrum', 'SDLC', 'RAG Pipelines', 'Sensor Fusion', 'Agentic AI'],
+};
+
+const CERTS = [
+  { name: 'AWS Certified AI Practitioner', provider: 'Amazon Web Services', year: '2025' },
+  { name: 'AWS Certified Cloud Practitioner', provider: 'Amazon Web Services', year: '2025' },
+  { name: 'Building Transformer-Based NLP Applications', provider: 'NVIDIA', year: '2025' },
+  { name: 'Fundamentals of Deep Learning', provider: 'NVIDIA', year: '2025' },
+  { name: 'Intermediate Web Development (WEB102)', provider: 'CodePath', year: '2025' },
+];
+
+function SkillGroup({ cat, items, delay }) {
+  return (
+    <Reveal delay={delay}>
+      <div className="skill-group">
+        <div className="skill-cat">{cat}</div>
+        <div className="skill-items">
+          {items.map(s => <span key={s} className="skill-tag">{s}</span>)}
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function Skills() {
+  return (
+    <section id="skills" className="section section-dark">
+      <div className="container">
+        <Reveal><div className="section-label">04 — Skills & Certifications</div></Reveal>
+        <Reveal delay={100}><h2 className="section-heading">Technical<br /><em>Arsenal</em></h2></Reveal>
+        <div className="skills-layout">
+          <div className="skills-col">
+            {Object.entries(SKILLS).map(([cat, items], i) => (
+              <SkillGroup key={cat} cat={cat} items={items} delay={i * 80} />
+            ))}
+          </div>
+          <div className="certs-col">
+            <Reveal delay={200}>
+              <div className="certs-heading">Certifications</div>
+              {CERTS.map((c) => (
+                <div key={c.name} className="cert-card">
+                  <div className="cert-year">{c.year}</div>
+                  <div className="cert-info">
+                    <div className="cert-name">{c.name}</div>
+                    <div className="cert-provider">{c.provider}</div>
+                  </div>
+                </div>
+              ))}
+            </Reveal>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="section contact-section">
+      <div className="container">
+        <div className="contact-inner">
+          <Reveal><div className="section-label">05 — Contact</div></Reveal>
+          <Reveal delay={100}>
+            <h2 className="contact-heading">Let's build<br />something<br /><em>remarkable.</em></h2>
+          </Reveal>
+          <Reveal delay={250}>
+            <p className="contact-sub">Open to collaborations and any interesting projects.</p>
+          </Reveal>
+          <Reveal delay={350}>
+            <div className="contact-links">
+              <a href="mailto:sarthakgupta1703@gmail.com" className="contact-link-btn">
+                <span className="contact-link-label">Email</span>
+                <span className="contact-link-value">sarthakgupta1703@gmail.com</span>
+                <span className="contact-link-arrow">↗</span>
+              </a>
+              <a href="https://www.linkedin.com/in/sarthak-gupta17/" target="_blank" rel="noopener noreferrer" className="contact-link-btn">
+                <span className="contact-link-label">LinkedIn</span>
+                <span className="contact-link-value">linkedin.com/in/sarthak-gupta17</span>
+                <span className="contact-link-arrow">↗</span>
+              </a>
+              <a href="https://github.com/sgupta1703" target="_blank" rel="noopener noreferrer" className="contact-link-btn">
+                <span className="contact-link-label">GitHub</span>
+                <span className="contact-link-value">github.com/sgupta1703</span>
+                <span className="contact-link-arrow">↗</span>
+              </a>
+            </div>
+          </Reveal>
+        </div>
+        <div className="footer-line">
+          <div className="footer-left">© 2025 Sarthak Gupta</div>
+          <div className="footer-right">Gainesville, FL · University of Florida</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Nav />
+      <main>
+        <Hero />
+        <Marquee />
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Contact />
+      </main>
+    </>
   );
 }
