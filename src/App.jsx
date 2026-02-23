@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+import Particles from './Particles';
 
 function useInView(threshold = 0.08) {
   const ref = useRef(null);
@@ -21,8 +22,6 @@ function Reveal({ children, delay = 0, y = 40, className = '' }) {
     </div>
   );
 }
-
-
 
 function MagneticBtn({ children, href, className = '', download }) {
   const btnRef = useRef(null);
@@ -146,10 +145,6 @@ function Hero() {
           <span className="name-line name-gold">GUPTA</span>
         </h1>
         <p className="hero-sub">Robotics · AI · Full-Stack · Researcher</p>
-        <div className="hero-desc">
-          Building intelligent systems at the intersection of machine learning,
-          robotics, and software engineering.
-        </div>
         <div className="hero-actions">
           <MagneticBtn href="https://www.linkedin.com/in/sarthak-gupta17/" className="btn-primary">LinkedIn ↗</MagneticBtn>
           <MagneticBtn href="https://github.com/sgupta1703" className="btn-ghost">GitHub ↗</MagneticBtn>
@@ -250,7 +245,7 @@ const EXPERIENCE = [
   {
     role: 'AI Developer Intern',
     org: 'Florida Community Innovation Foundation',
-    period: 'Oct 2025 – Present',
+    period: 'Oct 2025 – Dec 2025',
     tag: 'Industry',
     bullets: [
       'Designing LLM-driven agentic pipelines with LangChain, OpenAI APIs, and Python to autonomously extract and structure non-profit service data from unstructured web sources.',
@@ -305,7 +300,7 @@ const PROJECTS = [
   {
     name: 'Audionomous',
     stack: 'Python · OpenCV · MediaPipe · PyCAW · Arduino',
-    period: 'Oct 2025 – Present',
+    period: 'Oct 2025 – Nov 2025',
     desc: 'AI-driven real-time vision–audio modulation system adjusting headphone volume from facial motion cues at 30 FPS via USB-serial with ~95% detection stability under 200ms latency.',
     bullets: [
       'High-throughput serial pipeline with NICL framing and checksum validation',
@@ -317,7 +312,7 @@ const PROJECTS = [
   {
     name: 'PlayCast',
     stack: 'React Native · Node.js · FFmpeg · Gemini API · Firebase',
-    period: 'Sep 2025 – Present',
+    period: 'Sep 2025 – Dec 2025',
     desc: 'Cross-platform mobile app delivering TikTok-style real-time highlight reels from live sports using SportsRadar timestamps + Gemini NLP for automated clip scoring.',
     bullets: [
       'Live-to-highlight FFmpeg pipeline with automated clip trimming',
@@ -338,34 +333,205 @@ const PROJECTS = [
     ],
     index: '03',
   },
+  {
+    name: 'Faro',
+    stack: 'React · Node.js · Express · Cohere · Yelp API · Leaflet · OSRM',
+    period: 'Jan 2026',
+    desc: 'AI-powered itinerary engine that converts natural-language mood prompts into structured, map-rendered local plans with live routing and resilient multi-API orchestration.',
+    bullets: [
+      'Semantic tag generation + AI itinerary synthesis with structured JSON validation',
+      'Yelp aggregation, deduplication, distance/rating ranking, and text normalization matching',
+      'Live Leaflet map rendering with OSRM polyline routing and lifecycle-safe reflows',
+    ],
+    index: '04',
+  },
+  {
+    name: 'One',
+    stack: 'React Native (Expo) · TypeScript · Node.js · Express · Cohere API',
+    period: 'Feb 2026',
+    desc: 'AI-powered self-development app delivering category-based daily tasks and an integrated coaching system via a React Native client and Cohere-backed Node/Express API.',
+    bullets: [
+      'Category-based task feed with search and rapid task injection',
+      'Cohere-powered task generation endpoint with structured response handling',
+      'Conversational AI coach with contextual guidance and session continuity',
+    ],
+    index: '05',
+  },
 ];
+
+/* ─── Project Carousel ───────────────────────────────────────────────────────── */
+function ProjectCarousel() {
+  const trackRef = useRef(null);
+
+  // Auto-scroll state
+  const autoScrollSpeed = 0.6; // px per frame
+  const isPaused = useRef(false);
+  const rafRef = useRef(null);
+  const scrollPos = useRef(0);
+
+  // Drag state
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragStartScroll = useRef(0);
+  const velocity = useRef(0);
+  const lastX = useRef(0);
+  const lastTime = useRef(0);
+  const momentumRaf = useRef(null);
+
+  // For preventing click after drag
+  const didDrag = useRef(false);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Sync scrollPos with actual DOM on mount
+    scrollPos.current = track.scrollLeft;
+
+    const tick = () => {
+      if (!isPaused.current && !isDragging.current) {
+        scrollPos.current += autoScrollSpeed;
+        // Infinite loop: if we've scrolled past half, reset to 0
+        const half = track.scrollWidth / 2;
+        if (scrollPos.current >= half) scrollPos.current -= half;
+        track.scrollLeft = scrollPos.current;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  /* ── Hover pause ── */
+  const onMouseEnter = () => { isPaused.current = true; };
+  const onMouseLeave = () => {
+    if (!isDragging.current) isPaused.current = false;
+  };
+
+  /* ── Drag to scroll ── */
+  const startDrag = (clientX) => {
+    cancelAnimationFrame(momentumRaf.current);
+    isDragging.current = true;
+    didDrag.current = false;
+    dragStartX.current = clientX;
+    dragStartScroll.current = trackRef.current.scrollLeft;
+    lastX.current = clientX;
+    lastTime.current = performance.now();
+    velocity.current = 0;
+    trackRef.current.style.cursor = 'grabbing';
+  };
+
+  const moveDrag = (clientX) => {
+    if (!isDragging.current) return;
+    const dx = clientX - dragStartX.current;
+    if (Math.abs(dx) > 3) didDrag.current = true;
+
+    const now = performance.now();
+    const dt = now - lastTime.current || 1;
+    velocity.current = (clientX - lastX.current) / dt;
+    lastX.current = clientX;
+    lastTime.current = now;
+
+    const newScroll = dragStartScroll.current - dx;
+    trackRef.current.scrollLeft = newScroll;
+    scrollPos.current = newScroll;
+  };
+
+  const endDrag = () => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    trackRef.current.style.cursor = 'grab';
+
+    // Momentum flick
+    let vel = -velocity.current * 16; // scale to px/frame
+    const momentum = () => {
+      if (Math.abs(vel) < 0.3) {
+        // hand back to auto-scroll
+        isPaused.current = false;
+        return;
+      }
+      scrollPos.current += vel;
+      const half = trackRef.current.scrollWidth / 2;
+      if (scrollPos.current >= half) scrollPos.current -= half;
+      if (scrollPos.current < 0) scrollPos.current += half;
+      trackRef.current.scrollLeft = scrollPos.current;
+      vel *= 0.92; // friction
+      momentumRaf.current = requestAnimationFrame(momentum);
+    };
+    momentumRaf.current = requestAnimationFrame(momentum);
+  };
+
+  // Mouse events
+  const onMouseDown = e => { e.preventDefault(); startDrag(e.clientX); };
+  const onMouseMove = e => moveDrag(e.clientX);
+  const onMouseUp   = () => endDrag();
+
+  // Touch events
+  const onTouchStart = e => startDrag(e.touches[0].clientX);
+  const onTouchMove  = e => moveDrag(e.touches[0].clientX);
+  const onTouchEnd   = () => endDrag();
+
+  const allCards = [...PROJECTS, ...PROJECTS];
+
+  return (
+    <div className="carousel-outer">
+      <div className="carousel-fade carousel-fade-left" />
+      <div className="carousel-fade carousel-fade-right" />
+
+      <div
+        ref={trackRef}
+        className="carousel-track"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={e => { onMouseLeave(); endDrag(); }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {allCards.map((p, i) => (
+          <div key={i} className="carousel-item">
+            <TiltCard className="project-card">
+              <div className="project-top">
+                <span className="project-index">{p.index}</span>
+                <span className="project-period">{p.period}</span>
+              </div>
+              <div className="project-name">{p.name}</div>
+              <div className="project-stack">{p.stack}</div>
+              <p className="project-desc">{p.desc}</p>
+              <ul className="project-bullets">
+                {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
+              </ul>
+              <div className="project-line" />
+            </TiltCard>
+          </div>
+        ))}
+      </div>
+
+      {/* Scroll hint dots */}
+      <div className="carousel-dots" aria-hidden="true">
+        {PROJECTS.map((_, i) => (
+          <div key={i} className="carousel-dot" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function Projects() {
   return (
-    <section id="projects" className="section">
+    <section id="projects" className="section projects-section">
       <div className="container">
         <Reveal><div className="section-label">03 — Projects</div></Reveal>
-        <Reveal delay={100}><h2 className="section-heading">Selected<br /><em>Works</em></h2></Reveal>
-        <div className="projects-grid">
-          {PROJECTS.map((p, i) => (
-            <Reveal key={p.name} delay={i * 120}>
-              <TiltCard className="project-card">
-                <div className="project-top">
-                  <span className="project-index">{p.index}</span>
-                  <span className="project-period">{p.period}</span>
-                </div>
-                <div className="project-name">{p.name}</div>
-                <div className="project-stack">{p.stack}</div>
-                <p className="project-desc">{p.desc}</p>
-                <ul className="project-bullets">
-                  {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
-                </ul>
-                <div className="project-line" />
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
+        <Reveal delay={100}>
+          <h2 className="section-heading">Selected<br /><em>Works</em></h2>
+        </Reveal>
       </div>
+      <Reveal delay={200}>
+        <ProjectCarousel />
+      </Reveal>
     </section>
   );
 }
@@ -403,7 +569,7 @@ function Skills() {
     <section id="skills" className="section section-dark">
       <div className="container">
         <Reveal><div className="section-label">04 — Skills & Certifications</div></Reveal>
-        <Reveal delay={100}><h2 className="section-heading">Technical<br /><em>Arsenal</em></h2></Reveal>
+        <Reveal delay={100}><h2 className="section-heading">Technical<br /><em>Skills</em></h2></Reveal>
         <div className="skills-layout">
           <div className="skills-col">
             {Object.entries(SKILLS).map(([cat, items], i) => (
@@ -437,7 +603,7 @@ function Contact() {
         <div className="contact-inner">
           <Reveal><div className="section-label">05 — Contact</div></Reveal>
           <Reveal delay={100}>
-            <h2 className="contact-heading">Let's build<br />something<br /><em>remarkable.</em></h2>
+            <h2 className="contact-heading">Let's build<br />something<br /><em>together.</em></h2>
           </Reveal>
           <Reveal delay={250}>
             <p className="contact-sub">Open to collaborations and any interesting projects.</p>
@@ -476,8 +642,22 @@ export default function App() {
     <>
       <Nav />
       <main>
-        <Hero />
-        <Marquee />
+        <div className="hero-zone">
+          <Particles
+            particleColors={["#ffffff"]}
+            particleCount={200}
+            particleSpread={10}
+            speed={0.1}
+            particleBaseSize={100}
+            moveParticlesOnHover
+            alphaParticles={false}
+            disableRotation={false}
+            pixelRatio={1}
+            className="particles-hero"
+          />
+          <Hero />
+          <Marquee />
+        </div>
         <About />
         <Experience />
         <Projects />
