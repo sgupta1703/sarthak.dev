@@ -11,6 +11,8 @@ import {
 import Lenis from 'lenis';
 import './App.css';
 import Particles from './Particles';
+import AnimatedThemeToggler from './AnimatedThemeToggler';
+import GlassSurface from './GlassSurface';
 
 /* ─── Motion presets ─────────────────────────────────────────────────────── */
 const SPRING = { type: 'spring', damping: 22, stiffness: 200 };
@@ -517,16 +519,21 @@ function Marquee() {
 }
 
 /* ─── Nav ────────────────────────────────────────────────────────────────── */
+const NAV_LINKS = [
+  { label: 'About', id: 'about' },
+  { label: "What's Next", id: 'incoming' },
+  { label: 'Experience', id: 'experience' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Skills', id: 'skills' },
+  { label: 'Contact', id: 'contact' },
+];
+
 function Nav() {
-  const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState(null);
 
   useEffect(() => {
     const fn = () => {
       const y = window.scrollY;
-      setScrolled(y > 60);
       setHidden(y < window.innerHeight * 0.7);
     };
     fn();
@@ -538,35 +545,24 @@ function Nav() {
     };
   }, []);
 
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-      window.__lenis?.stop();
-    } else {
-      document.body.style.overflow = '';
-      window.__lenis?.start();
-    }
-    return () => {
-      document.body.style.overflow = '';
-      window.__lenis?.start();
-    };
-  }, [open]);
-
-  const links = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
   const scrollTo = (id) => {
-    const el = document.getElementById(id.toLowerCase());
+    const el = document.getElementById(id);
     if (!el) return;
     if (window.__lenis) {
       window.__lenis.scrollTo(el, { duration: 1.4, offset: -40 });
     } else {
       el.scrollIntoView({ behavior: 'smooth' });
     }
-    setOpen(false);
+  };
+
+  const scrollToTop = () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.4 });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <motion.nav
-      className={`nav ${scrolled ? 'nav-scrolled' : ''}`}
+    <motion.div
+      className="nav-fixed"
       initial={false}
       animate={{
         y: hidden ? -80 : 0,
@@ -575,63 +571,72 @@ function Nav() {
       }}
       transition={{ duration: 0.55, ease: EASE_OUT }}
     >
-      <div className="nav-inner">
-        <motion.div
-          className="nav-logo"
-          role="button"
-          tabIndex={0}
-          onClick={() => {
-            if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.4 });
-            else window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          whileHover={{ scale: 1.08, rotate: -4 }}
-          whileTap={{ scale: 0.92 }}
-          transition={SPRING}
-        >
-          SG
-        </motion.div>
+      <div className="nav-pill-wrap">
+        <div className="nav-pill">
+          <GlassSurface
+            width="100%"
+            height="100%"
+            borderRadius={14}
+            borderWidth={0.07}
+            brightness={50}
+            opacity={0.93}
+            blur={11}
+            displace={0.5}
+            backgroundOpacity={0.12}
+            saturation={1.3}
+            distortionScale={-180}
+            redOffset={0}
+            greenOffset={10}
+            blueOffset={20}
+            mixBlendMode="difference"
+            className="nav-pill-glass"
+          />
 
-        <div className={`nav-links ${open ? 'nav-open' : ''}`}>
-          {links.map((l) => (
-            <motion.button
-              key={l}
-              className="nav-link"
-              onClick={() => scrollTo(l)}
-              onHoverStart={() => setHoveredLink(l)}
-              onHoverEnd={() => setHoveredLink(null)}
-              whileTap={{ scale: 0.95 }}
+          <div className="nav-topbar">
+            <div
+              className="nav-wordmark"
+              role="button"
+              tabIndex={0}
+              onClick={scrollToTop}
+              onKeyDown={(e) => { if (e.key === 'Enter') scrollToTop(); }}
             >
-              <span>{l}</span>
-              {hoveredLink === l && (
-                <motion.span
-                  className="nav-link-underline"
-                  layoutId="navUnderline"
-                  transition={SPRING}
-                />
-              )}
-            </motion.button>
-          ))}
-          <motion.a
-            href="/Sarthak_Gupta_Resume.pdf"
-            download
-            className="nav-cta"
-            whileHover={{ y: -2, scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            transition={SPRING}
-          >
-            Resume ↓
-          </motion.a>
-        </div>
+              <span className="nav-wordmark-text">SG</span>
+              <motion.span
+                className="nav-wordmark-dot"
+                animate={{ opacity: [1, 0.25, 1] }}
+                transition={{ duration: 2.4, repeat: Infinity }}
+              />
+            </div>
 
-        <button
-          className={`nav-burger ${open ? 'burger-active' : ''}`}
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Menu"
-        >
-          <span /><span /><span />
-        </button>
+            <div className="nav-links">
+              {NAV_LINKS.map((link) => (
+                <button
+                  key={link.id}
+                  className="nav-link"
+                  onClick={() => scrollTo(link.id)}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="nav-cta-group">
+              <motion.a
+                href="/Sarthak_Gupta_Resume.pdf"
+                download
+                className="nav-cta"
+                whileHover={{ y: -1, scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
+                transition={SPRING}
+              >
+                Resume ↓
+              </motion.a>
+              <AnimatedThemeToggler />
+            </div>
+          </div>
+        </div>
       </div>
-    </motion.nav>
+    </motion.div>
   );
 }
 
@@ -1135,7 +1140,6 @@ const PROJECTS = [
     bullets: [
       'Multi-stage prompt chaining pipeline using OpenCLAW + LangChain to autonomously generate, evaluate, and refine AI-driven creative concepts; structured output schemas with JSON mode and few-shot exemplars.',
       'Sliding-window visual grounding: video generated in 5-second segments, extracting a reference keyframe after each clip and re-injecting it as a visual context anchor into the next prompt.',
-      'Eliminated cross-segment hallucination and maintained scene coherence across full two-minute output.',
     ],
     index: '03',
     award: '1st Place',
