@@ -126,9 +126,9 @@ body {
 /* The motion-driven page-bg overlay has hardcoded dark hex stops in App.jsx.
    In light mode, hide it so the html background-color (light --black) shows through. */
 :root:not(.dark) .page-bg { display: none; }
-/* Hide the white particle field in light mode (it's invisible on light bg
-   and would need a separate dark-particle config to look right). */
-:root:not(.dark) .particles-hero { display: none; }
+/* Invert the white particles to black in light mode — keeps the canvas's
+   alpha channel intact, so transparent areas stay transparent. */
+:root:not(.dark) .particles-hero { filter: invert(1); }
 
 /* ─── Noise ───────────────────────────────────────────────────────────────── */
 .noise {
