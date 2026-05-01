@@ -556,7 +556,8 @@ body {
   grid-template-columns: 1fr 1.6fr;
   gap: 80px; align-items: start;
 }
-.about-left-col { display: flex; flex-direction: column; gap: 36px; }
+.about-left-col { display: flex; flex-direction: column; gap: 28px; }
+.about-left-col .section-heading { margin-bottom: 0; }
 .about-p {
   font-size: 1.05rem; line-height: 1.85;
   color: var(--white-2); margin-bottom: 24px;
@@ -576,6 +577,30 @@ body {
   transition: color 0.2s, border-color 0.2s;
 }
 .course-tag:hover { color: var(--white); border-color: var(--gold-border); }
+
+/* ─── Ideas Link ─────────────────────────────────────────────────────────── */
+.ideas-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  width: fit-content;
+  padding: 6px 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--white-3);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.ideas-link:hover {
+  color: var(--gold);
+  border-bottom-color: var(--gold-border);
+}
+.ideas-link-arrow {
+  display: inline-block;
+  font-size: 0.85rem;
+  line-height: 1;
+}
 
 /* ─── GPA Badge ──────────────────────────────────────────────────────────────── */
 .gpa-badge {

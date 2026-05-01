@@ -1,0 +1,297 @@
+.experiment-page {
+  position: relative;
+  min-height: 600vh;
+  overflow-x: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(201, 162, 86, 0.08), transparent 34vw),
+    radial-gradient(circle at 80% 75%, rgba(255, 255, 255, 0.07), transparent 32vw),
+    #000;
+  color: #f2ede8;
+}
+
+.experiment-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scene-3d-perspective {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.scene-3d-tilt {
+  position: absolute;
+  inset: -3vmax;
+  transform-style: preserve-3d;
+  will-change: transform;
+  mask-image: radial-gradient(
+    ellipse 74% 76% at 50% 50%,
+    black 28%,
+    rgba(0, 0, 0, 0.78) 58%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 74% 76% at 50% 50%,
+    black 28%,
+    rgba(0, 0, 0, 0.78) 58%,
+    transparent 100%
+  );
+}
+
+.scene-3d-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.54), transparent 22%, transparent 78%, rgba(0, 0, 0, 0.54)),
+    radial-gradient(ellipse at center, transparent 28%, rgba(0, 0, 0, 0.2) 66%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.scene-3d-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mix-blend-mode: screen;
+}
+
+.experiment-content {
+  position: relative;
+  z-index: 2;
+}
+
+.experiment-panel {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  padding: clamp(28px, 6vw, 96px);
+}
+
+.experiment-panel--hero,
+.experiment-panel--outro {
+  justify-items: center;
+  text-align: center;
+}
+
+.experiment-panel--left,
+.experiment-panel--right {
+  place-items: center;
+}
+
+.experiment-pair {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(40px, 5vw, 72px);
+  width: 100%;
+}
+
+.experiment-panel--left .experiment-copy { order: 1; }
+.experiment-panel--left .experiment-visual { order: 2; }
+
+.experiment-panel--right .experiment-copy {
+  order: 2;
+  text-align: right;
+}
+.experiment-panel--right .experiment-visual { order: 1; }
+
+.experiment-copy,
+.experiment-visual {
+  flex: 0 1 auto;
+}
+
+.experiment-copy {
+  width: min(580px, 100%);
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(8, 8, 8, 0.74), rgba(8, 8, 8, 0.26)),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(14px);
+}
+
+.experiment-panel--hero .experiment-copy,
+.experiment-panel--outro .experiment-copy {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.experiment-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(201, 162, 86, 0.38);
+  border-radius: 999px;
+  color: #c9a256;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.experiment-eyebrow {
+  margin-bottom: 18px;
+  color: rgba(242, 237, 232, 0.52);
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.68rem, 1vw, 0.78rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.experiment-title {
+  margin: 0;
+  color: #fff8ef;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(3.2rem, 8vw, 8rem);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.experiment-panel:not(.experiment-panel--hero):not(.experiment-panel--outro) .experiment-title {
+  font-size: clamp(2.8rem, 5.6vw, 6.8rem);
+}
+
+.experiment-body {
+  max-width: 42rem;
+  margin: 24px 0 0;
+  color: rgba(242, 237, 232, 0.68);
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.98rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.experiment-panel--right .experiment-body {
+  margin-left: auto;
+}
+
+.experiment-scroll-cue {
+  width: max-content;
+  margin: 36px auto 0;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: rgba(242, 237, 232, 0.62);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.experiment-home {
+  position: fixed;
+  top: 28px;
+  left: 32px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 232, 0.6);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.experiment-home:hover {
+  color: #fff8ef;
+}
+
+.experiment-home-arrow {
+  display: inline-block;
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.experiment-home:hover .experiment-home-arrow {
+  transform: translateX(-3px);
+}
+
+@media (max-width: 760px) {
+  .experiment-home {
+    top: 16px;
+    left: 16px;
+    font-size: 0.64rem;
+  }
+}
+
+.experiment-back {
+  display: inline-block;
+  margin-top: 34px;
+  color: rgba(242, 237, 232, 0.68);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(201, 162, 86, 0.42);
+  padding-bottom: 4px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.experiment-back:hover {
+  color: #fff8ef;
+  border-color: #c9a256;
+}
+
+@media (max-width: 900px) {
+  .experiment-pair {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+  }
+
+  .experiment-panel--right .experiment-copy {
+    text-align: left;
+  }
+
+  .experiment-pair .experiment-copy { order: 1; }
+  .experiment-pair .experiment-visual { order: 2; }
+
+  .experiment-panel--right .experiment-body {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .experiment-panel {
+    text-align: left;
+    padding: 28px;
+  }
+
+  .experiment-panel--hero,
+  .experiment-panel--outro {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .experiment-copy {
+    padding: 24px;
+    border-radius: 22px;
+  }
+}

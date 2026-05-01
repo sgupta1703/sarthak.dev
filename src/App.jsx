@@ -13,6 +13,7 @@ import './App.css';
 import Particles from './Particles';
 import AnimatedThemeToggler from './AnimatedThemeToggler';
 import GlassSurface from './GlassSurface';
+import Experiment from './Experiment';
 
 /* ─── Motion presets ─────────────────────────────────────────────────────── */
 const SPRING = { type: 'spring', damping: 22, stiffness: 200 };
@@ -242,7 +243,6 @@ function GithubActivity() {
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
-        console.warn('[GithubActivity]', err);
         if (!cancelled) setFailed(true);
       });
     return () => { cancelled = true; };
@@ -785,6 +785,24 @@ function About() {
                 <CharReveal delay={0.15}>Thinker.</CharReveal><br />
                 <em><CharReveal delay={0.3}>Builder.</CharReveal></em>
               </h2>
+            </Reveal>
+            <Reveal delay={170}>
+              <motion.a
+                href="#experiment"
+                className="ideas-link"
+                whileHover="hover"
+                initial="rest"
+                animate="rest"
+              >
+                <span className="ideas-link-label">Ideas Notebook</span>
+                <motion.span
+                  className="ideas-link-arrow"
+                  variants={{ rest: { x: 0 }, hover: { x: 4 } }}
+                  transition={SPRING}
+                >
+                  →
+                </motion.span>
+              </motion.a>
             </Reveal>
             <Reveal delay={200}>
               <motion.div
@@ -1573,8 +1591,42 @@ function useLenis() {
 }
 
 /* ─── App ────────────────────────────────────────────────────────────────── */
+function useHashRoute() {
+  const [hash, setHash] = useState(() =>
+    typeof window !== 'undefined' ? window.location.hash : ''
+  );
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  return hash;
+}
+
 export default function App() {
   useLenis();
+  const hash = useHashRoute();
+  const isExperiment = hash === '#experiment';
+
+  useEffect(() => {
+    if (!hash || isExperiment) return;
+    const id = hash.slice(1);
+    let cancelled = false;
+    const tryScroll = (attempt = 0) => {
+      if (cancelled) return;
+      const el = document.getElementById(id);
+      if (el) {
+        if (window.__lenis) window.__lenis.scrollTo(el, { duration: 1.2, offset: -40 });
+        else el.scrollIntoView({ behavior: 'smooth' });
+      } else if (attempt < 12) {
+        requestAnimationFrame(() => tryScroll(attempt + 1));
+      }
+    };
+    tryScroll();
+    return () => { cancelled = true; };
+  }, [hash, isExperiment]);
+
+  if (isExperiment) return <Experiment />;
   return (
     <>
       <PageBackground />
