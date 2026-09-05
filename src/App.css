@@ -768,6 +768,13 @@ body {
   text-align: right; white-space: nowrap;
 }
 .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.exp-bullets-empty {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--white-3);
+  letter-spacing: 0.02em;
+}
 .exp-bullet {
   font-size: 0.93rem; line-height: 1.75; color: var(--white-2);
   padding-left: 24px; position: relative;
@@ -876,67 +883,6 @@ body {
 .exp-tab-tag:hover {
   background: rgba(201,162,86,0.08);
   border-color: var(--gold);
-}
-
-/* ─── Incoming section (Qualcomm) ────────────────────────────────────────── */
-.section-incoming {
-  position: relative;
-  background: transparent;
-  padding: 64px 0 8px;
-}
-.section-incoming + .section { padding-top: 36px; }
-.incoming-container { position: relative; }
-.incoming-stage {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-top: 4px;
-  padding: 0;
-}
-.incoming-logo-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  isolation: isolate;
-}
-/* Cheap halo: a static radial gradient pseudo-element behind the logo —
-   replaces the expensive multi-stack drop-shadow filter chain. */
-.incoming-logo-wrap::before {
-  content: '';
-  position: absolute;
-  width: 130%;
-  height: 130%;
-  left: -15%;
-  top: -15%;
-  z-index: -1;
-  background: radial-gradient(
-    ellipse 50% 50% at 50% 50%,
-    rgba(50, 83, 220, 0.30),
-    rgba(50, 83, 220, 0.12) 38%,
-    transparent 72%
-  );
-  pointer-events: none;
-}
-.incoming-logo {
-  display: block;
-  width: clamp(240px, 34vw, 480px);
-  height: auto;
-  user-select: none;
-  -webkit-user-drag: none;
-  /* Single light drop-shadow follows the letterforms; cheap. */
-  filter: drop-shadow(0 0 18px rgba(50, 83, 220, 0.55));
-}
-
-.section-incoming .section-heading { margin-bottom: 24px; }
-
-@media (max-width: 640px) {
-  .section-incoming { padding: 48px 0 8px; }
-  .section-incoming + .section { padding-top: 28px; }
-  .incoming-logo { width: clamp(200px, 64vw, 320px); }
-  .section-incoming .section-heading { margin-bottom: 16px; }
 }
 
 /* ─── Project award badge ────────────────────────────────────────────────── */
@@ -1342,6 +1288,7 @@ body {
   .nav-cta { display: none; }
   /* On phones, horizontally scroll the links if they overflow — no hamburger needed. */
   .nav-links {
+    position: relative;
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -1349,9 +1296,28 @@ body {
   }
   .nav-links::-webkit-scrollbar { display: none; }
   .nav-link { font-size: 0.66rem; padding: 6px 6px; }
+  /* Fade the trailing edge so a clipped last link (e.g. "Contact") reads as
+     scrollable, not broken. Purely decorative — never blocks taps. */
+  .nav-links::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 22px;
+    background: linear-gradient(to left, rgba(0,0,0,0.55), transparent);
+    pointer-events: none;
+  }
+  :root:not(.dark) .nav-links::after {
+    background: linear-gradient(to left, rgba(255,255,255,0.6), transparent);
+  }
 
   .scroll-progress { height: 1.5px; }
-  .back-to-top { width: 44px; height: 44px; bottom: 20px; right: 20px; font-size: 1.05rem; }
+  /* Smaller + more translucent than desktop: on phones this floats directly over
+     body copy while scrolling, so a near-opaque fill was eating whole words. */
+  .back-to-top {
+    width: 40px; height: 40px; bottom: 18px; right: 18px; font-size: 1rem;
+    background: rgba(8,8,8,0.55);
+  }
+  :root:not(.dark) .back-to-top { background: rgba(244,241,236,0.55); }
 }
 
 @media (max-width: 420px) {

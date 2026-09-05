@@ -521,7 +521,6 @@ function Marquee() {
 /* ─── Nav ────────────────────────────────────────────────────────────────── */
 const NAV_LINKS = [
   { label: 'About', id: 'about' },
-  { label: "What's Next", id: 'incoming' },
   { label: 'Experience', id: 'experience' },
   { label: 'Projects', id: 'projects' },
   { label: 'Skills', id: 'skills' },
@@ -581,13 +580,14 @@ function Nav() {
             brightness={50}
             opacity={0.93}
             blur={11}
-            displace={0.5}
+            backdropBlur={2}
+            displace={1.5}
             backgroundOpacity={0.12}
             saturation={1.3}
-            distortionScale={-180}
+            distortionScale={-14}
             redOffset={0}
-            greenOffset={10}
-            blueOffset={20}
+            greenOffset={1}
+            blueOffset={2}
             mixBlendMode="difference"
             className="nav-pill-glass"
           />
@@ -698,7 +698,7 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.55, ease: EASE_OUT }}
         >
-          <span>Incoming @ Qualcomm</span>
+          <span>Prev @ Qualcomm</span>
           <span className="hero-status-sep">·</span>
           <span className="hero-status-period">Summer 2026</span>
         </motion.div>
@@ -874,6 +874,17 @@ function About() {
 /* ─── Experience ─────────────────────────────────────────────────────────── */
 const EXPERIENCE = [
   {
+    role: 'AI Software Engineering Intern',
+    org: 'Qualcomm',
+    period: 'May 2026 – Aug 2026',
+    tag: 'Industry',
+    bullets: [
+      'Worked within Qualcomm\'s AI Software organization on on-device AI for Snapdragon platforms, contributing to a pipeline spanning voice, text, and image processing.',
+      'Gained exposure to how model execution is coordinated across on-device voice, text, and image workloads running directly on Snapdragon hardware.',
+      'Collaborated cross-functionally inside a large-scale embedded AI software pipeline, working through onboarding, codebase ramp-up, and team development workflows at production scale.',
+    ],
+  },
+  {
     role: 'Robotics Software Developer',
     org: 'Machine Intelligence Lab @ UF',
     period: 'Jan 2025 – May 2026',
@@ -949,36 +960,22 @@ function LiveDot() {
   );
 }
 
-function Incoming() {
-  const { ref, opacity } = useSectionScroll();
+function ExpBullets({ bullets, whileInView }) {
+  if (bullets.length === 0) {
+    return <p className="exp-bullets-empty">Write-up coming soon.</p>;
+  }
+  const viewProps = whileInView
+    ? { whileInView: 'visible', viewport: { once: true, margin: '-10%' } }
+    : { animate: 'visible' };
   return (
-    <motion.section ref={ref} id="incoming" className="section section-incoming" style={{ opacity }}>
-      <div className="container incoming-container">
-        <Reveal>
-          <div className="section-label">02 — What's Next</div>
-        </Reveal>
-        <Reveal delay={100}>
-          <h2 className="section-heading incoming-heading">
-            <em><CharReveal>Summer 2026</CharReveal></em>
-            {' · '}
-            <CharReveal delay={0.25}>Incoming Intern</CharReveal>
-          </h2>
-        </Reveal>
-        <div className="incoming-stage">
-          <div className="incoming-logo-wrap">
-            <motion.img
-              src="/Qualcomm-emblem.png"
-              alt="Qualcomm"
-              className="incoming-logo"
-              initial={{ opacity: 0, y: 24, scale: 0.96 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: '-15%' }}
-              transition={{ duration: 1, delay: 0.35, ease: EASE_OUT }}
-            />
-          </div>
-        </div>
-      </div>
-    </motion.section>
+    <motion.ul className="exp-bullets" initial="hidden" variants={STAGGER_PARENT} {...viewProps}>
+      {bullets.map((b, j) => (
+        <motion.li key={j} className="exp-bullet" variants={STAGGER_CHILD}>
+          <motion.span className="exp-bullet-mark" variants={MARK_VARIANT} />
+          {highlightMetrics(b)}
+        </motion.li>
+      ))}
+    </motion.ul>
   );
 }
 
@@ -1000,7 +997,7 @@ function Experience() {
   return (
     <motion.section ref={ref} id="experience" className="section section-dark exp-section" style={{ opacity }}>
       <div className="container">
-        <Reveal><div className="section-label">03 — Experience</div></Reveal>
+        <Reveal><div className="section-label">02 — Experience</div></Reveal>
         <Reveal delay={100}>
           <h2 className="section-heading">
             Where I've<br /><em>Worked &amp; Researched</em>
@@ -1059,19 +1056,7 @@ function Experience() {
                   transition={{ duration: 0.7, delay: 0.1, ease: EASE_OUT }}
                   style={{ originX: 0 }}
                 />
-                <motion.ul
-                  className="exp-bullets"
-                  initial="hidden"
-                  animate="visible"
-                  variants={STAGGER_PARENT}
-                >
-                  {EXPERIENCE[active].bullets.map((b, j) => (
-                    <motion.li key={j} className="exp-bullet" variants={STAGGER_CHILD}>
-                      <motion.span className="exp-bullet-mark" variants={MARK_VARIANT} />
-                      {highlightMetrics(b)}
-                    </motion.li>
-                  ))}
-                </motion.ul>
+                <ExpBullets bullets={EXPERIENCE[active].bullets} />
               </motion.div>
             </AnimatePresence>
           </div>
@@ -1102,20 +1087,7 @@ function Experience() {
                 transition={{ duration: 0.6, delay: 0.2, ease: EASE_OUT }}
                 style={{ originX: 0 }}
               />
-              <motion.ul
-                className="exp-bullets"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-10%' }}
-                variants={STAGGER_PARENT}
-              >
-                {e.bullets.map((b, j) => (
-                  <motion.li key={j} className="exp-bullet" variants={STAGGER_CHILD}>
-                    <motion.span className="exp-bullet-mark" variants={MARK_VARIANT} />
-                    {highlightMetrics(b)}
-                  </motion.li>
-                ))}
-              </motion.ul>
+              <ExpBullets bullets={e.bullets} whileInView />
             </motion.div>
           ))}
         </div>
@@ -1363,7 +1335,7 @@ function Projects() {
   return (
     <motion.section ref={ref} id="projects" className="section projects-section" style={{ opacity }}>
       <div className="container">
-        <Reveal><div className="section-label">04 — Projects</div></Reveal>
+        <Reveal><div className="section-label">03 — Projects</div></Reveal>
         <Reveal delay={100}>
           <h2 className="section-heading">
             <CharReveal>Selected</CharReveal><br />
@@ -1444,7 +1416,7 @@ function Skills() {
   return (
     <motion.section ref={ref} id="skills" className="section section-skills" style={{ opacity }}>
       <div className="container">
-        <Reveal><div className="section-label">05 — Skills &amp; Certifications</div></Reveal>
+        <Reveal><div className="section-label">04 — Skills &amp; Certifications</div></Reveal>
         <Reveal delay={100}>
           <h2 className="section-heading">
             <CharReveal>Technical</CharReveal><br />
@@ -1500,7 +1472,7 @@ function Contact() {
     <motion.section ref={ref} id="contact" className="section contact-section" style={{ opacity }}>
       <div className="container">
         <div className="contact-inner">
-          <Reveal><div className="section-label">06 — Contact</div></Reveal>
+          <Reveal><div className="section-label">05 — Contact</div></Reveal>
           <div className="contact-grid">
             <div className="contact-text-col">
               <Reveal delay={100}>
@@ -1651,7 +1623,6 @@ export default function App() {
           <Marquee />
         </div>
         <About />
-        <Incoming />
         <Experience />
         <Projects />
         <Skills />
