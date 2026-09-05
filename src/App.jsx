@@ -824,7 +824,7 @@ function About() {
           <div className="about-text-col">
             <Reveal delay={250}>
               <p className="about-p">
-                I'm a sophomore at the <span className="gold">University of Florida</span> pursuing
+                I'm a junior at the <span className="gold">University of Florida</span> pursuing
                 a B.S. in Computer Science with a minor in Accounting.
               </p>
             </Reveal>
@@ -885,36 +885,37 @@ const EXPERIENCE = [
     ],
   },
   {
-    role: 'Robotics Software Developer',
-    org: 'Machine Intelligence Lab @ UF',
-    period: 'Jan 2025 – May 2026',
-    tag: 'Research',
-    bullets: [
-      'Developing a C++ Gazebo plugin within the ROS2 control framework for SubjuGator 9\'s gripper, integrating JointController and JointTrajectoryController for 2-DOF velocity and position control.',
-      'Integrated a Water-Linked DVL using Bash, Linux, Python and C++; increased localization to 10 Hz and reduced drift from 12 m/hr → 4 m/hr during sea trials.',
-      'Advanced SubjuGator 9 to the semifinals of RoboSub 2025, ranking 12th of 55 international teams.',
-    ],
-  },
-  {
-    role: 'Undergraduate Researcher',
+    role: 'Undergraduate Student Researcher',
     org: 'VERG Lab @ University of Florida',
     period: 'May 2025 – Present',
     tag: 'Research',
     bullets: [
       'Developing an end-to-end AI video generation pipeline in ComfyUI for the U.S. Air Force, producing cadet training content on sexual assault prevention.',
-      'Deployed on HiPerGator HPC processing 500 GB of raw data and generating 200 training videos with automated text, voice, and visual effects.',
-      'Research abstract accepted to the 2nd Annual Digital Health Symposium at UF/FSU.',
+      'Deploying and scaling the pipeline on HiPerGator HPC, processing 500 GB of raw video/image data and generating 200 training videos with automated text, voice, and visual effects.',
+      'Configuring multi-node Slurm jobs on HiPerGator, parallelizing CUDA workflows to accelerate AI model inference and video synthesis.',
+      'Publication: Murray, E.E., Canales, R., Venkatakrishnan, R., Gupta, S., Lok, B., & Scaglione, N. (2026). Leveraging generative AI\'s ability to adapt sexual assault prevention training for Air Force Cadets — presented at the annual Digital Health Symposium, University of Florida.',
     ],
   },
   {
-    role: 'AI Developer Intern',
-    org: 'Florida Resource Map Project @ FCI Foundation',
-    period: 'Oct 2025 – Present',
+    role: 'AI Software Developer',
+    org: 'Florida Community Innovation Foundation @ UF',
+    period: 'Oct 2025 – May 2026',
     tag: 'Industry',
     bullets: [
-      'Designing and deploying LLM-driven agentic pipelines using LangChain, OpenAI APIs, and Python to autonomously extract, validate, and structure non-profit and government service data from unstructured web sources.',
-      'Built scraping and data-cleaning pipelines processing 5,000+ resource listings related to food, housing, and mental health; improved data coverage by 35%.',
+      'Designed and deployed LLM-driven agentic pipelines using LangChain, OpenAI APIs, and Python to autonomously extract, validate, and structure non-profit and government service data from unstructured web sources.',
+      'Built web scraping and data-cleaning pipelines processing 5,000+ resource listings across food, housing, and mental health; improved data coverage by 35%.',
       'Implemented a RAG system with vector search for resource recommendations, increasing query accuracy and contextual relevance by 40%.',
+    ],
+  },
+  {
+    role: 'Robotics Software Engineer',
+    org: 'Machine Intelligence Lab @ UF',
+    period: 'Jan 2025 – May 2026',
+    tag: 'Research',
+    bullets: [
+      'Developed a C++ Gazebo plugin within the ROS2 control framework for SubjuGator 9\'s gripper, integrating JointController and JointTrajectoryController for 2-DOF velocity and position control.',
+      'Integrated a Water-Linked DVL using Bash, Linux, Python and C++; increased localization to 10 Hz and reduced drift from 12 m/hr → 4 m/hr during sea trials.',
+      'Advanced SubjuGator 9 to the semifinals of RoboSub 2025, ranking 12th of 55 international teams.',
     ],
   },
 ];
