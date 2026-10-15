@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { useSite } from '../context';
 import { EXPERIENCE, PROFILE } from '../data';
 import { copyText, isMac } from '../actions';
@@ -93,7 +93,7 @@ export default function CommandPalette() {
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <Motion.div
           className="palette-backdrop"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -101,7 +101,7 @@ export default function CommandPalette() {
           transition={{ duration: 0.2 }}
           onMouseDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
         >
-          <motion.div
+          <Motion.div
             className="palette"
             role="dialog"
             aria-modal="true"
@@ -157,8 +157,8 @@ export default function CommandPalette() {
               <span><kbd className="kbd">↵</kbd> to select</span>
               <span><kbd className="kbd">{isMac() ? '⌘' : 'Ctrl'}</kbd><kbd className="kbd">K</kbd> to toggle</span>
             </div>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
       )}
     </AnimatePresence>
   );

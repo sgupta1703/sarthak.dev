@@ -1,4 +1,4 @@
-import { motion, useSpring } from 'framer-motion';
+import { motion as Motion, useSpring } from 'framer-motion';
 import { useSite } from '../context';
 
 // The hit area stays still; only the contents follow the pointer.
@@ -21,7 +21,7 @@ export function Magnetic({ children, className = '', as = 'button', ...props }) 
       onPointerLeave={reset}
       onBlur={reset}
     >
-      <motion.span className="magnetic-inner" style={reducedMotion ? undefined : { x, y }}>{children}</motion.span>
+      <Motion.span className="magnetic-inner" style={reducedMotion ? undefined : { x, y }}>{children}</Motion.span>
     </Tag>
   );
 }

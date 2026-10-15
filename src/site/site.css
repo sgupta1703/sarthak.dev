@@ -257,8 +257,6 @@ img, svg, canvas { display: block; }
 }
 .proj-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; }
 .proj-head .kicker { margin-bottom: 14px; }
-.proj-progress { width: 200px; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: 14px; flex: none; }
-.proj-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--text)); transform-origin: left; }
 .proj-track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .proj-card { min-width: 0; display: flex; flex-direction: column; padding: 0; }
 .proj-visual {
@@ -306,16 +304,6 @@ img, svg, canvas { display: block; }
 /* ─── Skills ─────────────────────────────────────────────────────────────── */
 .sec-skills.sec-flow { padding: 7vh 0; }
 .skills-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 56px; }
-.marquees { margin: 48px 0 54px; display: flex; flex-direction: column; gap: 4px; }
-.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.marquee-track { display: flex; width: max-content; will-change: transform; }
-.marquee-item {
-  display: inline-flex; align-items: center; gap: 30px; padding-right: 30px;
-  font-size: clamp(2.4rem, 6vw, 5.2rem); font-weight: 600; letter-spacing: -0.05em; line-height: 1.1; white-space: nowrap;
-}
-.marquee-sep { font-size: 0.36em; color: var(--accent); }
-.marquee-outline .marquee-item { color: transparent; -webkit-text-stroke: 1px var(--text-3); }
-.marquee-outline .marquee-sep { -webkit-text-stroke: 0; color: var(--accent); }
 
 /* ─── Résumé ─────────────────────────────────────────────────────────────── */
 .sec-head-center { margin: 0 auto 44px; text-align: center; display: flex; flex-direction: column; align-items: center; }
@@ -385,7 +373,6 @@ img, svg, canvas { display: block; }
   .skills-heading { margin-bottom: 36px; gap: 20px; }
   .proj-sticky { position: static; padding: 90px 0 60px; }
   .proj-head { flex-direction: column; align-items: flex-start; }
-  .proj-progress { display: none; }
   .proj-more { min-height: 160px; }
   .footer { flex-direction: column; text-align: center; gap: 8px; }
 }

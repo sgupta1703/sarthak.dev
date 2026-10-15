@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion as Motion, useInView } from 'framer-motion';
 import { useSite } from '../context';
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -25,14 +25,14 @@ export function BlurText({ text, as: Tag = 'span', className = '', delay = 0, st
           aria-hidden="true"
           className="word-mask"
         >
-          <motion.span
+          <Motion.span
             className="blur-word"
             initial={reducedMotion ? false : { y: '105%', rotate: 0 }}
             animate={inView || reducedMotion ? { y: 0, rotate: 0 } : undefined}
             transition={{ duration: reducedMotion ? 0 : 0.55, ease: EASE, delay: reducedMotion ? 0 : delay + i * stagger }}
           >
             {w}{i < words.length - 1 ? '\u00a0' : ''}
-          </motion.span>
+          </Motion.span>
         </span>
       ))}
     </Tag>
@@ -63,50 +63,5 @@ export function NumberTicker({ value, decimals = 0, suffix = '', prefix = '', du
       <span className="ticker-sizer" aria-hidden="true">{prefix}{value.toLocaleString('en-US', { minimumFractionDigits: decimals })}{suffix}</span>
       <span className="ticker-live">{prefix}{shown}{suffix}</span>
     </span>
-  );
-}
-
-/* When `text` changes, characters scramble briefly and resolve left to right. */
-const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/';
-export function ShuffleText({ text, className = '' }) {
-  const { reducedMotion } = useSite();
-  const [shown, setShown] = useState(text);
-  useEffect(() => {
-    if (reducedMotion) { setShown(text); return; }
-    let frame = 0;
-    let raf;
-    const total = 18;
-    const tick = () => {
-      frame++;
-      const reveal = Math.floor((frame / total) * text.length);
-      let out = '';
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        out += i < reveal || ch === ' ' ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-      }
-      setShown(out);
-      if (frame < total) raf = requestAnimationFrame(tick);
-      else setShown(text);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [text, reducedMotion]);
-  return <span className={className}>{shown}</span>;
-}
-
-/* Reveal-on-view wrapper for blocks. */
-export function Reveal({ children, delay = 0, y = 24, className = '', as = 'div' }) {
-  const { reducedMotion } = useSite();
-  const M = motion[as];
-  return (
-    <M
-      className={className}
-      initial={reducedMotion ? false : { opacity: 0, y, filter: 'blur(6px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.9, ease: EASE, delay }}
-    >
-      {children}
-    </M>
   );
 }
