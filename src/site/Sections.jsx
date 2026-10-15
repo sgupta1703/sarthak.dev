@@ -6,7 +6,6 @@ import { BlurText, NumberTicker, Rich } from './components/Text';
 import { SpotlightCard } from './components/Widgets';
 import { PixelPortrait, ProductPreview, ProjectLens, Underline, Workflow } from './components/Details';
 import { Magnetic, RollText } from './components/Motion';
-import { copyText } from './actions';
 import ProjectVisual from './components/ProjectVisual';
 import SkillIndex from './components/SkillIndex';
 import ScrollExpand from './components/ScrollExpand';
@@ -310,9 +309,6 @@ export function Contact() {
         <h2 className="h-section contact-title"><BlurText text="Let’s build something together." /></h2>
         <p className="lead contact-sub">Open to collaborations and interesting projects.</p>
         <div className="contact-actions">
-          <Magnetic className="btn btn-primary" onClick={() => copyText(PROFILE.email, 'Email copied')}>
-            Copy {PROFILE.email}
-          </Magnetic>
           {links.map((l) => (
             <Magnetic as="a" key={l.label} className="btn btn-ghost" href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener noreferrer' : undefined}>
               <BrandIcon name={l.icon} /><RollText>{l.label}</RollText><span aria-hidden="true">↗</span>
