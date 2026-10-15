@@ -21,6 +21,10 @@
   --nav-h: 54px;
   color-scheme: light;
 }
+/* First paint for dark-mode visitors, before applyTheme sets the Ink palette inline. */
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #101113; --text: #f1f4f8; color-scheme: dark; }
+}
 
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

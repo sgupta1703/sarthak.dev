@@ -41,11 +41,18 @@ export const THEMES = [
 ];
 
 export const THEME_STORAGE_KEY = 'portfolio-theme';
+export const DARK_QUERY = '(prefers-color-scheme: dark)';
 export const getTheme = (id) => THEMES.find((theme) => theme.id === id) || THEMES.find((theme) => theme.id === 'sage');
 
+/* The visitor's own pick, if they made one in the theme picker. */
+export function storedTheme() {
+  try { return THEMES.find((theme) => theme.id === localStorage.getItem(THEME_STORAGE_KEY)) || null; }
+  catch { return null; }
+}
+
+/* Otherwise follow the system: Ink in dark mode, Sage in light. */
 export function readTheme() {
-  try { return getTheme(localStorage.getItem(THEME_STORAGE_KEY)); }
-  catch { return getTheme('sage'); }
+  return storedTheme() || getTheme(window.matchMedia?.(DARK_QUERY).matches ? 'ink' : 'sage');
 }
 
 export function applyTheme(theme) {
