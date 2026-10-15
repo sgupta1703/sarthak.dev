@@ -8,13 +8,19 @@ import {
 } from 'framer-motion';
 import ScrollSequence from './ScrollSequence';
 import IdeaVisual from './IdeaVisuals';
+import { useMedia } from './site/hooks';
 import './Experiment.css';
 
+// Two encodes of the same 240 frames: 1600×900 for landscape screens and a
+// 648×1080 center crop for portrait ones, which would otherwise download
+// pixels that cover-fit crops away.
 const FRAME_COUNT = 240;
-const FRAMES = Array.from(
+const frameSet = (set) => Array.from(
   { length: FRAME_COUNT },
-  (_, i) => `/photos/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+  (_, i) => `/frames/${set}/${String(i + 1).padStart(3, '0')}.webp`
 );
+const WIDE_FRAMES = frameSet('wide');
+const TALL_FRAMES = frameSet('tall');
 
 const TILT_RANGE = 6;
 const MotionDiv = motion.div;
@@ -100,6 +106,8 @@ export default function Experiment() {
   const rotY = useSpring(mvY, { damping: 32, stiffness: 90 });
   const sceneScale = useTransform(scrollYProgress, [0, 0.16, 0.84, 1], [1.08, 1.02, 1.02, 1.08]);
   const stageOpacity = useTransform(scrollYProgress, [0, 0.04, 0.94, 1], [0.55, 1, 1, 0.55]);
+  const portrait = useMedia('(max-aspect-ratio: 4/5)');
+  const reducedMotion = useMedia('(prefers-reduced-motion: reduce)');
 
   useEffect(() => {
     window.__lenis?.scrollTo?.(0, { immediate: true });
@@ -107,6 +115,7 @@ export default function Experiment() {
   }, []);
 
   useEffect(() => {
+    if (reducedMotion) return undefined;
     const onMove = (e) => {
       const cx = e.clientX / window.innerWidth - 0.5;
       const cy = e.clientY / window.innerHeight - 0.5;
@@ -125,7 +134,7 @@ export default function Experiment() {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseleave', onLeave);
     };
-  }, [mvX, mvY]);
+  }, [mvX, mvY, reducedMotion]);
 
   return (
     <main className="experiment-page">
@@ -140,7 +149,7 @@ export default function Experiment() {
             style={{ rotateX: rotX, rotateY: rotY, scale: sceneScale }}
           >
             <ScrollSequence
-              frames={FRAMES}
+              frames={portrait ? TALL_FRAMES : WIDE_FRAMES}
               progress={scrollYProgress}
             />
           </MotionDiv>
@@ -154,8 +163,8 @@ export default function Experiment() {
           <MotionSection
             className={`experiment-panel experiment-panel--${panel.variant}`}
             key={panel.title}
-            initial={{ opacity: 0, y: 42 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, transform: 'translateY(42px)' }}
+            whileInView={{ opacity: 1, transform: 'translateY(0px)' }}
             viewport={{ amount: 0.45, once: false }}
             transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
           >

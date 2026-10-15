@@ -4,10 +4,9 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 22px;
   background:
-    linear-gradient(135deg, rgba(8, 8, 8, 0.74), rgba(8, 8, 8, 0.32)),
+    linear-gradient(135deg, rgba(8, 8, 8, 0.86), rgba(8, 8, 8, 0.62)),
     rgba(255, 255, 255, 0.03);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.38);
   font-family: var(--font-mono, monospace);
   color: rgba(242, 237, 232, 0.9);
   text-align: left;
@@ -110,6 +109,15 @@
   transform-origin: center;
   height: 100%;
   display: block;
+  animation: iv-voice var(--duration) ease-in-out var(--delay) infinite both;
+}
+
+@keyframes iv-voice {
+  0% { transform: scaleY(0.25); }
+  25% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
+  75% { transform: scaleY(0.9); }
+  100% { transform: scaleY(0.3); }
 }
 
 .iv-voice-caption {
@@ -158,6 +166,14 @@
   transform-origin: left center;
   pointer-events: none;
   display: block;
+  animation: iv-highlight 5.8s ease-in-out infinite both;
+}
+
+/* The highlight and the captured snippet share one 5.8s cycle. */
+@keyframes iv-highlight {
+  0% { transform: scaleX(0); }
+  32.6%, 72.6% { transform: scaleX(1); }
+  93.1%, 100% { transform: scaleX(0); }
 }
 
 .iv-paper-corner {
@@ -177,6 +193,13 @@
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(201, 162, 86, 0.32);
+  animation: iv-snippet 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite both;
+}
+
+@keyframes iv-snippet {
+  0%, 39.1% { opacity: 0; transform: translateY(10px); }
+  51.2%, 79.1% { opacity: 1; transform: translateY(0); }
+  93.1%, 100% { opacity: 0; transform: translateY(-4px); }
 }
 
 .iv-paper-quote {
@@ -416,6 +439,13 @@
   font-family: var(--font-body, sans-serif);
   font-size: 0.78rem;
   color: #fff8ef;
+  animation: iv-chat-bubble 6.6s cubic-bezier(0.16, 1, 0.3, 1) var(--delay) infinite both;
+}
+
+@keyframes iv-chat-bubble {
+  0% { opacity: 0; transform: translateY(6px); }
+  8%, 85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-2px); }
 }
 
 .iv-chat-row--me .iv-chat-bubble {
@@ -429,6 +459,13 @@
   background: rgba(255, 255, 255, 0.08);
   border-radius: 1px;
   overflow: hidden;
+  animation: iv-chat-timer 6.6s ease-in-out var(--delay) infinite both;
+}
+
+@keyframes iv-chat-timer {
+  0% { opacity: 0; }
+  10%, 85% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .iv-chat-timer-fill {
@@ -437,6 +474,12 @@
   height: 100%;
   background: #c9a256;
   transform-origin: left center;
+  animation: iv-chat-fill 6.6s linear calc(var(--delay) + 0.1s) infinite both;
+}
+
+@keyframes iv-chat-fill {
+  0% { transform: scaleX(1); }
+  78%, 100% { transform: scaleX(0); }
 }
 
 /* === 06 stroke === */
@@ -544,6 +587,13 @@
   height: 0;
   pointer-events: none;
   z-index: 1;
+  transform: rotate(var(--angle));
+  animation: iv-orbit var(--duration) linear infinite;
+}
+
+@keyframes iv-orbit {
+  from { transform: rotate(var(--angle)); }
+  to { transform: rotate(calc(var(--angle) + 360deg)); }
 }
 
 .iv-local-orb-dot {
@@ -595,5 +645,18 @@
     width: 100%;
     padding: 18px;
     border-radius: 18px;
+  }
+}
+
+/* Off-screen visuals hold still instead of animating unseen. */
+.iv-host.is-paused *,
+.iv-host.is-paused *::before,
+.iv-host.is-paused *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iv-host * {
+    animation: none !important;
   }
 }

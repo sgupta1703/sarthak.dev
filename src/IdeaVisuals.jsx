@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion as Motion, useInView } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import './IdeaVisuals.css';
 
 const VIEWPORT = { amount: 0.4, once: false };
@@ -24,11 +24,11 @@ function VoicePRVisual() {
         </div>
         <div className="iv-diff">
           {lines.map((l, i) => (
-            <motion.div
+            <Motion.div
               key={i}
               className={`iv-diff-line iv-diff--${l.kind}`}
-              initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, transform: 'translateX(-8px)' }}
+              whileInView={{ opacity: 1, transform: 'translateX(0px)' }}
               viewport={VIEWPORT}
               transition={{ duration: 0.4, delay: i * 0.14, ease: EASE }}
             >
@@ -36,22 +36,19 @@ function VoicePRVisual() {
                 {l.kind === 'add' ? '+' : l.kind === 'remove' ? '−' : ' '}
               </span>
               <span className="iv-diff-code">{l.text}</span>
-            </motion.div>
+            </Motion.div>
           ))}
         </div>
       </div>
       <div className="iv-voice-row">
         <div className="iv-voice-wave" aria-hidden="true">
           {Array.from({ length: 22 }).map((_, i) => (
-            <motion.span
+            <span
               key={i}
               className="iv-voice-bar"
-              animate={{ scaleY: [0.25, 1, 0.5, 0.9, 0.3] }}
-              transition={{
-                duration: 1.4 + ((i * 13) % 5) * 0.12,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: (i % 7) * 0.06,
+              style={{
+                '--duration': `${1.4 + ((i * 13) % 5) * 0.12}s`,
+                '--delay': `${(i % 7) * 0.06}s`,
               }}
             />
           ))}
@@ -78,34 +75,12 @@ function PaperBookmarkVisual() {
             className={`iv-paper-line ${i === targetIdx ? 'iv-paper-line--target' : ''}`}
             style={{ width: `${w}%` }}
           >
-            {i === targetIdx && (
-              <motion.span
-                className="iv-paper-highlight"
-                animate={{ scaleX: [0, 1, 1, 0] }}
-                transition={{
-                  duration: 5.4,
-                  times: [0, 0.35, 0.78, 1],
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  repeatDelay: 0.4,
-                }}
-              />
-            )}
+            {i === targetIdx && <span className="iv-paper-highlight" />}
           </div>
         ))}
         <div className="iv-paper-corner" />
       </div>
-      <motion.div
-        className="iv-paper-snippet"
-        animate={{ opacity: [0, 0, 1, 1, 0], y: [10, 10, 0, 0, -4] }}
-        transition={{
-          duration: 5.4,
-          times: [0, 0.42, 0.55, 0.85, 1],
-          repeat: Infinity,
-          ease: EASE,
-          repeatDelay: 0.4,
-        }}
-      >
+      <div className="iv-paper-snippet">
         <div className="iv-paper-quote">
           "the system was wrong because the model never saw the field"
         </div>
@@ -116,13 +91,13 @@ function PaperBookmarkVisual() {
           <span>·</span>
           <span>captured 14:02</span>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
 /* 03 — Lab Notes Agent */
-function LabNotesVisual() {
+function LabNotesVisual({ active }) {
   const logs = [
     { t: '14:02:11', kind: 'info', msg: 'DVL_NODE init ok' },
     { t: '14:02:13', kind: 'info', msg: 'thrust_pid armed · profile=cruise' },
@@ -132,9 +107,10 @@ function LabNotesVisual() {
   ];
   const [step, setStep] = useState(0);
   useEffect(() => {
+    if (!active) return undefined;
     const id = setInterval(() => setStep((v) => (v + 1) % (logs.length + 4)), 1100);
     return () => clearInterval(id);
-  }, [logs.length]);
+  }, [logs.length, active]);
   const visible = Math.min(step, logs.length);
   const showSummary = step > logs.length;
   return (
@@ -146,26 +122,26 @@ function LabNotesVisual() {
         </div>
         <div className="iv-term-body">
           {logs.slice(0, visible).map((l, i) => (
-            <motion.div
+            <Motion.div
               key={`${step}-${i}`}
               className={`iv-term-line iv-term-line--${l.kind}`}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, transform: 'translateY(4px)' }}
+              animate={{ opacity: 1, transform: 'translateY(0px)' }}
               transition={{ duration: 0.3 }}
             >
               <span className="iv-term-t">{l.t}</span>
               <span className="iv-term-msg">{l.msg}</span>
-            </motion.div>
+            </Motion.div>
           ))}
           {visible < logs.length && <span className="iv-term-cursor" />}
         </div>
       </div>
-      <motion.div
+      <Motion.div
         className="iv-lab-summary"
         initial={false}
         animate={{
           opacity: showSummary ? 1 : 0,
-          y: showSummary ? 0 : 10,
+          transform: showSummary ? 'translateY(0px)' : 'translateY(10px)',
         }}
         transition={{ duration: 0.5, ease: EASE }}
       >
@@ -176,7 +152,7 @@ function LabNotesVisual() {
         <div className="iv-lab-summary-b">
           heading drift recovered after 6s — flag thruster recalibration before next run.
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }
@@ -195,7 +171,7 @@ function AskWriterVisual() {
       <div className="iv-writer-doc">
         <div className="iv-writer-h">draft · "why ranking fails on long tail"</div>
         {lines.map((line, i) => (
-          <motion.div
+          <Motion.div
             key={i}
             className={`iv-writer-line ${line.em ? 'iv-writer-line--em' : ''}`}
             initial={{ opacity: 0 }}
@@ -206,10 +182,10 @@ function AskWriterVisual() {
           />
         ))}
       </div>
-      <motion.div
+      <Motion.div
         className="iv-writer-margin"
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, transform: 'translateX(-10px)' }}
+        whileInView={{ opacity: 1, transform: 'translateX(0px)' }}
         viewport={VIEWPORT}
         transition={{ duration: 0.6, delay: 1.4, ease: EASE }}
       >
@@ -217,7 +193,7 @@ function AskWriterVisual() {
         <div className="iv-writer-q-text">
           you say <em>"scaled"</em> but never say by how much. add a number?
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }
@@ -229,7 +205,6 @@ function DisappearChatVisual() {
     { from: 'me',   text: 'yeah, 30m',  delay: 1.2 },
     { from: 'them', text: 'see u',      delay: 2.4 },
   ];
-  const cycle = 6.6;
   return (
     <div className="iv iv-chat">
       <div className="iv-chat-frame">
@@ -239,45 +214,11 @@ function DisappearChatVisual() {
         </div>
         <div className="iv-chat-body">
           {messages.map((m, i) => (
-            <div key={i} className={`iv-chat-row iv-chat-row--${m.from}`}>
-              <motion.div
-                className="iv-chat-bubble"
-                animate={{
-                  opacity: [0, 1, 1, 0],
-                  y: [6, 0, 0, -2],
-                }}
-                transition={{
-                  duration: cycle,
-                  times: [0, 0.08, 0.85, 1],
-                  delay: m.delay,
-                  repeat: Infinity,
-                  ease: EASE,
-                }}
-              >
-                {m.text}
-              </motion.div>
-              <motion.div
-                className="iv-chat-timer"
-                animate={{ opacity: [0, 1, 1, 0] }}
-                transition={{
-                  duration: cycle,
-                  times: [0, 0.1, 0.85, 1],
-                  delay: m.delay,
-                  repeat: Infinity,
-                }}
-              >
-                <motion.span
-                  className="iv-chat-timer-fill"
-                  animate={{ scaleX: [1, 0] }}
-                  transition={{
-                    duration: cycle * 0.78,
-                    delay: m.delay + 0.1,
-                    ease: 'linear',
-                    repeat: Infinity,
-                    repeatDelay: cycle * 0.22,
-                  }}
-                />
-              </motion.div>
+            <div key={i} className={`iv-chat-row iv-chat-row--${m.from}`} style={{ '--delay': `${m.delay}s` }}>
+              <div className="iv-chat-bubble">{m.text}</div>
+              <div className="iv-chat-timer">
+                <span className="iv-chat-timer-fill" />
+              </div>
             </div>
           ))}
         </div>
@@ -292,7 +233,7 @@ function StrokeWatcherVisual() {
     <div className="iv iv-stroke">
       <div className="iv-stroke-pad">
         <svg viewBox="0 0 200 90" className="iv-stroke-svg" preserveAspectRatio="xMidYMid meet">
-          <motion.path
+          <Motion.path
             d="M 18 26 Q 18 14 32 14 Q 46 14 46 28 Q 46 40 18 66 L 50 66"
             stroke="#fff8ef"
             strokeWidth="3"
@@ -304,7 +245,7 @@ function StrokeWatcherVisual() {
             viewport={VIEWPORT}
             transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
           />
-          <motion.path
+          <Motion.path
             d="M 70 40 L 90 40 M 80 30 L 80 50"
             stroke="#c9a256"
             strokeWidth="3"
@@ -315,7 +256,7 @@ function StrokeWatcherVisual() {
             viewport={VIEWPORT}
             transition={{ duration: 0.5, delay: 1.4, ease: EASE }}
           />
-          <motion.path
+          <Motion.path
             d="M 108 18 Q 122 12 130 18 Q 138 26 124 38 Q 138 46 132 60 Q 122 70 108 66"
             stroke="#fff8ef"
             strokeWidth="3"
@@ -327,7 +268,7 @@ function StrokeWatcherVisual() {
             viewport={VIEWPORT}
             transition={{ duration: 0.9, delay: 1.9, ease: EASE }}
           />
-          <motion.path
+          <Motion.path
             d="M 152 36 L 178 36 M 152 50 L 178 50"
             stroke="#c9a256"
             strokeWidth="3"
@@ -340,10 +281,10 @@ function StrokeWatcherVisual() {
           />
         </svg>
       </div>
-      <motion.div
+      <Motion.div
         className="iv-stroke-trace"
-        initial={{ opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, transform: 'translateY(8px)' }}
+        whileInView={{ opacity: 1, transform: 'translateY(0px)' }}
         viewport={VIEWPORT}
         transition={{ duration: 0.6, delay: 3.4, ease: EASE }}
       >
@@ -359,7 +300,7 @@ function StrokeWatcherVisual() {
           <span className="iv-stroke-step">step 3</span>
           <span>finished "3 = " confidently</span>
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }
@@ -378,18 +319,13 @@ function LocalAgentVisual() {
         {Array.from({ length: orbCount }).map((_, i) => {
           const angle = (i / orbCount) * 360;
           return (
-            <motion.span
+            <span
               key={i}
               className="iv-local-orb"
-              animate={{ rotate: [angle, angle + 360] }}
-              transition={{
-                duration: 14 + (i % 3) * 3,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
+              style={{ '--angle': `${angle}deg`, '--duration': `${14 + (i % 3) * 3}s` }}
             >
               <span className="iv-local-orb-dot" />
-            </motion.span>
+            </span>
           );
         })}
       </div>
@@ -421,8 +357,15 @@ const VISUALS = {
   'local-agent':    LocalAgentVisual,
 };
 
+// Looping animations and timers only run while the visual is near the viewport.
 export default function IdeaVisual({ kind }) {
+  const ref = useRef(null);
+  const active = useInView(ref, { margin: '15% 0px' });
   const Cmp = VISUALS[kind];
   if (!Cmp) return null;
-  return <Cmp />;
+  return (
+    <div ref={ref} className={`iv-host ${active ? '' : 'is-paused'}`}>
+      <Cmp active={active} />
+    </div>
+  );
 }
