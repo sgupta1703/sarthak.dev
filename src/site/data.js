@@ -6,8 +6,6 @@ export const PROFILE = {
   name: 'Sarthak Gupta',
   headline: 'Dreamer. Thinker. Builder.',
   email: 'sarthakgupta1703@gmail.com',
-  phone: '(813) 501-9744',
-  phoneHref: 'tel:8135019744',
   linkedin: 'https://www.linkedin.com/in/sarthak-gupta17/',
   linkedinLabel: 'linkedin.com/in/sarthak-gupta17',
   github: 'https://github.com/sgupta1703',
@@ -16,6 +14,7 @@ export const PROFILE = {
   location: 'Gainesville, FL',
   timeZone: 'America/New_York',
   resume: '/Sarthak_Gupta_Resume.pdf',
+  resumeUpdated: 'Oct 2026', // update alongside the PDF
 };
 
 export const EXPERIENCE = [

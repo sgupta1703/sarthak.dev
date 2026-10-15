@@ -286,7 +286,7 @@ export function Resume() {
         <div className="sec-head sec-head-center">
           <Kicker>Résumé</Kicker>
           <h2 className="h-section"><BlurText text="The one-pager." /></h2>
-          <p className="lead resume-sub">My resume</p>
+          <p className="lead resume-sub">Last updated {PROFILE.resumeUpdated}</p>
         </div>
         <ResumeViewer />
       </div>
@@ -319,8 +319,6 @@ export function Contact() {
           ))}
         </div>
         <p className="contact-meta">
-          <a href={PROFILE.phoneHref}>{PROFILE.phone}</a>
-          <span aria-hidden="true">·</span>
           <span>{PROFILE.location}</span>
         </p>
       </Pinned>

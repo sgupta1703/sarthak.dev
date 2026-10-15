@@ -43,7 +43,7 @@ export function BlurText({ text, as: Tag = 'span', className = '', delay = 0, st
 export function NumberTicker({ value, decimals = 0, suffix = '', prefix = '', duration = 0.85, className = '' }) {
   const { reducedMotion } = useSite();
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-10% 0px' });
+  const inView = useInView(ref, { once: true });
   const [n, setN] = useState(reducedMotion ? value : 0);
   useEffect(() => {
     if (!inView || reducedMotion) { if (reducedMotion) setN(value); return; }
