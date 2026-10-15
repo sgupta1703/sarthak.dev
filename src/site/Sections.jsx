@@ -11,6 +11,7 @@ import ProjectVisual from './components/ProjectVisual';
 import SkillIndex from './components/SkillIndex';
 import ScrollExpand from './components/ScrollExpand';
 import ResumeViewer from './components/ResumeViewer';
+import BrandIcon from './components/BrandIcon';
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -299,9 +300,9 @@ export function Contact() {
   const { register, goTo } = useSite();
   const i = useIndex('contact');
   const links = [
-    { label: 'Email', href: `mailto:${PROFILE.email}` },
-    { label: 'LinkedIn', href: PROFILE.linkedin, external: true },
-    { label: 'GitHub', href: PROFILE.github, external: true },
+    { label: 'Email', icon: 'gmail', href: `mailto:${PROFILE.email}` },
+    { label: 'LinkedIn', icon: 'linkedin', href: PROFILE.linkedin, external: true },
+    { label: 'GitHub', icon: 'github', href: PROFILE.github, external: true },
   ];
   return (
     <section id="contact" ref={register(i)} className="sec sec-contact">
@@ -314,7 +315,7 @@ export function Contact() {
           </Magnetic>
           {links.map((l) => (
             <Magnetic as="a" key={l.label} className="btn btn-ghost" href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener noreferrer' : undefined}>
-              <RollText>{l.label}</RollText><span aria-hidden="true">↗</span>
+              <BrandIcon name={l.icon} /><RollText>{l.label}</RollText><span aria-hidden="true">↗</span>
             </Magnetic>
           ))}
         </div>

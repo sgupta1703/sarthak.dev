@@ -319,6 +319,7 @@ img, svg, canvas { display: block; }
 .contact-title { font-size: clamp(2rem, 4vw, 3.5rem); text-wrap: balance; }
 .contact-sub { color: var(--text-2); margin: 12px 0 0; }
 .contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+.brand-icon { width: 16px; height: 16px; flex: none; margin-right: -2px; fill: currentColor; }
 .contact-meta { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; font-size: 0.85rem; color: var(--text-3); }
 .contact-meta a { text-decoration: none; }
 .contact-meta a:hover { color: var(--text); }
