@@ -1,19 +1,26 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/terminal_icon_131942.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f6f5f2" />
     <title>Sarthak Gupta</title>
-    <script>
-      // Restore theme before paint so there's no flash of wrong theme.
-      (function () {
-        var stored = localStorage.getItem('theme');
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var isDark = stored ? stored === 'dark' : true; // dark default
-        document.documentElement.classList.toggle('dark', isDark);
-      })();
-    </script>
+    <meta
+      name="description"
+      content="Sarthak Gupta: AI engineer and B.S./M.S. Computer Science student at the University of Florida. Co-founder of Lingua, researcher at UF's EdgeAI Lab, and former AI Software Engineering Intern at Qualcomm."
+    />
+    <meta property="og:title" content="Sarthak Gupta" />
+    <meta property="og:description" content="Software engineering, AI research, robotics, and Lingua. Selected work by Sarthak Gupta." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sarthakg.dev" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="root"></div>
